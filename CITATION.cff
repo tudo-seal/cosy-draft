@@ -1,0 +1,38 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Combinatory Synthesizer (CoSy)
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Andrej
+    family-names: Dudenhefner
+    email: andrej.dudenhefner@cs.tu-dortmund.de
+    affiliation: TU Dortmund University
+    orcid: 'https://orcid.org/0000-0003-1104-444X'
+  - given-names: Christoph
+    family-names: Stahl
+    email: christoph.stahl@tu-dortmund.de
+    affiliation: TU Dortmund University
+    orcid: 'https://orcid.org/0009-0006-9079-8379'
+  - given-names: Constantin
+    family-names: Chaumet
+    email: constantin.chaumet@tu-dortmund.de
+    affiliation: TU Dortmund University
+    orcid: 'https://orcid.org/0000-0002-8359-8030'
+  - given-names: Felix
+    family-names: Laarmann
+    email: felix.laarmann@tu-dortmund.de
+    affiliation: TU Dortmund University
+    orcid: 'https://orcid.org/0009-0001-5761-9678'
+repository-code: 'https://github.com/tudo-seal/cosy'
+keywords:
+  - combinatory logic
+  - type system
+  - inhabitation
+  - intersection types
+  - program synthesis
+license: Apache-2.0
