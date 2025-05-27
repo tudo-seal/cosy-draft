@@ -18,41 +18,35 @@ G = TypeVar("G", bound=Hashable)  # type of constants
 
 
 @dataclass(frozen=True)
-class NonTerminalOrigin(Generic[NT]):
-    value: NT
+class ConstantArgument(Generic[T, G]):
+    name: str
+    value: T
+    origin: G
 
 
 @dataclass(frozen=True)
-class ConstantOrigin(Generic[G]):
-    value: G
-
-
-Origin = NonTerminalOrigin | ConstantOrigin
-
-
-@dataclass(frozen=True)
-class Argument(Generic[NT, T, G]):
+class NonTerminalArgument(Generic[NT]):
     name: str | None
-    origin: Origin
-    value: Tree[T] | None = None
+    origin: NT
+
+
+Argument = ConstantArgument[T, G] | NonTerminalArgument[NT]
 
 
 @dataclass(frozen=True)
 class RHSRule(Generic[NT, T, G]):
-    arguments: tuple[Argument[NT, T, G], ...]
+    arguments: tuple[Argument, ...]
     predicates: tuple[Callable[[dict[str, Any]], bool], ...]
     terminal: T
 
     @property
     def non_terminals(self) -> frozenset[NT]:
         """Set of non-terminals occurring in the body of the rule."""
-        return frozenset(arg.origin.value for arg in self.arguments if isinstance(arg.origin, NonTerminalOrigin))
+        return frozenset(arg.origin for arg in self.arguments if isinstance(arg, NonTerminalArgument))
 
     @property
     def literal_substitution(self):
-        return {
-            n.name: n.value.root for n in self.arguments if isinstance(n.origin, ConstantOrigin) and n.name is not None
-        }
+        return {n.name: n.value for n in self.arguments if isinstance(n, ConstantArgument)}
 
 
 class SolutionSpace(Generic[NT, T, G]):
@@ -160,14 +154,12 @@ class SolutionSpace(Generic[NT, T, G]):
             return output_set
 
         named_non_terminals = [
-            a.origin.value if isinstance(a.origin, NonTerminalOrigin) and a.name is not None else None
-            for a in rule.arguments
+            a.origin if isinstance(a, NonTerminalArgument) and a.name is not None else None for a in rule.arguments
         ]
         unnamed_non_terminals = [
-            a.origin.value if isinstance(a.origin, NonTerminalOrigin) and a.name is None else None
-            for a in rule.arguments
+            a.origin if isinstance(a, NonTerminalArgument) and a.name is None else None for a in rule.arguments
         ]
-        literal_arguments = [a.value if isinstance(a.origin, ConstantOrigin) else None for a in rule.arguments]
+        literal_arguments = [Tree(a.value, ()) if isinstance(a, ConstantArgument) else None for a in rule.arguments]
 
         def interleave(
             parameters: Sequence[Tree[T] | None],
@@ -175,7 +167,7 @@ class SolutionSpace(Generic[NT, T, G]):
             arguments: Sequence[Tree[T] | None],
         ) -> Iterable[Tree[T]]:
             """Interleave parameters, literal arguments and arguments."""
-            for parameter, literal_argument, argument in zip(parameters, literal_arguments, arguments, strict=False):
+            for parameter, literal_argument, argument in zip(parameters, literal_arguments, arguments, strict=True):
                 if parameter is not None:
                     yield parameter
                 elif literal_argument is not None:
@@ -202,7 +194,7 @@ class SolutionSpace(Generic[NT, T, G]):
             return {
                 a.name: p
                 for p, a in zip(parameters, rule.arguments, strict=True)
-                if isinstance(a.origin, NonTerminalOrigin) and a.name is not None
+                if isinstance(a, NonTerminalArgument) and a.name is not None
             } | rule.literal_substitution
 
         def valid_parameters(
@@ -316,16 +308,15 @@ class SolutionSpace(Generic[NT, T, G]):
                     if len(rhs.arguments) == len(tree.children)
                     and rhs.terminal == tree.root
                     and all(
-                        argument.value == child
+                        argument.value == child.root and len(child.children) == 0
                         for argument, child in zip(rhs.arguments, tree.children, strict=True)
-                        if isinstance(argument.origin, ConstantOrigin)
+                        if isinstance(argument, ConstantArgument)
                     )
                 ]
 
                 # if there is a relevant rule containing only TerminalArgument which are equal to the children of the tree
                 if any(
-                    all(isinstance(argument.origin, ConstantOrigin) for argument in rhs.arguments)
-                    for rhs in relevant_rhss
+                    all(isinstance(argument, ConstantArgument) for argument in rhs.arguments) for rhs in relevant_rhss
                 ):
                     results.append(True)
                     continue
@@ -338,16 +329,14 @@ class SolutionSpace(Generic[NT, T, G]):
 
                 for rhs in relevant_rhss:
                     substitution = {
-                        argument.name: child.root if isinstance(argument.origin, ConstantOrigin) else child
+                        argument.name: child.root if isinstance(argument, ConstantArgument) else child
                         for argument, child in zip(rhs.arguments, tree.children, strict=True)
                         if argument.name is not None
                     }
 
                     # conjunction of the results for individual arguments in the rule
                     def and_inputs(
-                        count: int = sum(
-                            1 for argument in rhs.arguments if isinstance(argument.origin, NonTerminalOrigin)
-                        ),
+                        count: int = sum(1 for argument in rhs.arguments if isinstance(argument, NonTerminalArgument)),
                         substitution: dict[str, Any] = substitution,
                         predicates=rhs.predicates,
                     ) -> None:
@@ -357,8 +346,8 @@ class SolutionSpace(Generic[NT, T, G]):
 
                     stack.append(and_inputs)
                     for argument, child in zip(rhs.arguments, tree.children, strict=True):
-                        if isinstance(argument.origin, NonTerminalOrigin):
-                            stack.append((argument.origin.value, child))
+                        if isinstance(argument, NonTerminalArgument):
+                            stack.append((argument.origin, child))
             elif isinstance(task, FunctionType):
                 # task is a function to execute
                 task()

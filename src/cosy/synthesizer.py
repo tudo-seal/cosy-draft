@@ -27,13 +27,12 @@ from typing import (
 from cosy.combinatorics import maximal_elements, minimal_covers
 from cosy.solution_space import (
     Argument,
-    ConstantOrigin,
-    NonTerminalOrigin,
+    ConstantArgument,
+    NonTerminalArgument,
     RHSRule,
     SolutionSpace,
 )
 from cosy.subtypes import Subtypes, Taxonomy
-from cosy.tree import Tree
 from cosy.types import (
     Abstraction,
     Arrow,
@@ -355,34 +354,32 @@ class Synthesizer(Generic[C]):
                             ):
                                 if named_arguments is None:  # do this only once for each instantiation
                                     named_arguments = tuple(
-                                        Argument(
+                                        ConstantArgument(
                                             param.name,
-                                            ConstantOrigin(combinator_info.groups[param.name]),
-                                            Tree(instantiation[param.name]),
+                                            instantiation[param.name],
+                                            combinator_info.groups[param.name],
                                         )
                                         if isinstance(param, LiteralParameter)
-                                        else Argument(
+                                        else NonTerminalArgument(
                                             param.name,
-                                            NonTerminalOrigin(
-                                                param.group.subst(
-                                                    combinator_info.groups,
-                                                    instantiation,
-                                                )
+                                            param.group.subst(
+                                                combinator_info.groups,
+                                                instantiation,
                                             ),
                                         )
                                         for param in combinator_info.prefix
                                         if isinstance(param, Parameter)
                                     )
                                     stack.extendleft(
-                                        (argument.origin.value, None)
+                                        (argument.origin, None)
                                         for argument in named_arguments
-                                        if isinstance(argument.origin, NonTerminalOrigin)
+                                        if isinstance(argument, NonTerminalArgument)
                                     )
 
                                 anonymous_arguments: tuple[Argument, ...] = tuple(
-                                    Argument(
+                                    NonTerminalArgument(
                                         None,
-                                        NonTerminalOrigin(ty.subst(combinator_info.groups, instantiation)),
+                                        ty.subst(combinator_info.groups, instantiation),
                                     )
                                     for ty in subquery
                                 )
@@ -394,7 +391,7 @@ class Synthesizer(Generic[C]):
                                         combinator,
                                     ),
                                 )
-                                stack.extendleft((q.origin.value, None) for q in anonymous_arguments)
+                                stack.extendleft((q.origin, None) for q in anonymous_arguments)
 
     def construct_solution_space(self, *targets: Type) -> SolutionSpace[Type, C, Any]:
         """Constructs a logic program in the current environment for the given target types."""
