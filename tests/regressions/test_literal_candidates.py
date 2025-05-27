@@ -15,14 +15,10 @@ def test_candidates() -> None:
     component_specifications = {
         c: DSL()
         .parameter("x", "bool")
-        .parameter_constraint(lambda vs: vs["x"]) # x is True
-        .parameter("y", "bool", lambda _vs: [False]) # y is False
-        .parameter("z", "bool", lambda vs: [vs["x"]]) # z is equal to x
-        .suffix(
-            Constructor("a", Var("x"))
-            & Constructor("b", Var("y"))
-            & Constructor("c", Var("z"))
-        )
+        .parameter_constraint(lambda vs: vs["x"])  # x is True
+        .parameter("y", "bool", lambda _vs: [False])  # y is False
+        .parameter("z", "bool", lambda vs: [vs["x"]])  # z is equal to x
+        .suffix(Constructor("a", Var("x")) & Constructor("b", Var("y")) & Constructor("c", Var("z")))
     }
 
     def xyz(x: bool | None, y: bool | None, z: bool | None) -> Type:
@@ -32,20 +28,20 @@ def test_candidates() -> None:
             & Constructor("c", Omega() if z is None else Literal(z, "bool"))
         )
 
-    parameter_space={"bool": [True, False]}
+    parameter_space = {"bool": [True, False]}
     synthesizer = Synthesizer(component_specifications, parameter_space)
-
 
     for x in [True, False, None]:
         for y in [True, False, None]:
             for z in [True, False, None]:
                 target = xyz(x, y, z)
-                grammar = synthesizer.construct_solution_space(target)
-                result = {tree.interpret() for tree in grammar.enumerate_trees(target)}
-                if (not x) or y or (not z):
+                solution_space = synthesizer.construct_solution_space(target)
+                result = {tree.interpret() for tree in solution_space.enumerate_trees(target)}
+                if (x is not None and not x) or y or (z is not None and not z):
                     assert len(result) == 0
                 else:
                     assert result == {"C True False True"}
+
 
 def test_multi_values1() -> None:
     # a literal varible can be assigned multiple computed values
@@ -55,16 +51,15 @@ def test_multi_values1() -> None:
     parameter_space = {"int": [0, 1, 2, 3]}
     component_specifications = {
         c: DSL()
-        .parameter("a", "int") # a in [0, 1, 2, 3]
-        .parameter("b", "int", lambda vs: [vs["a"] - 1, vs["a"] + 1]) # b in [a-1, a+1]
+        .parameter("a", "int")  # a in [0, 1, 2, 3]
+        .parameter("b", "int", lambda vs: [vs["a"] - 1, vs["a"] + 1])  # b in [a-1, a+1]
         .suffix(Constructor("c", Var("a")))
     }
 
     synthesizer = Synthesizer(component_specifications, parameter_space)
     target = Constructor("c", Literal(0, "int"))
-
-    result = synthesizer.construct_solution_space(target)
-    assert [tree.interpret() for tree in result.enumerate_trees(target)] == ["C 0 1"]
+    solution_space = synthesizer.construct_solution_space(target)
+    assert [tree.interpret() for tree in solution_space.enumerate_trees(target)] == ["C 0 1"]
 
 
 def test_multi_values2() -> None:
@@ -82,9 +77,8 @@ def test_multi_values2() -> None:
 
     synthesizer = Synthesizer(component_specifications, parameter_space)
     target = Constructor("c", Literal(1, "int"))
-
-    result = synthesizer.construct_solution_space(target)
-    assert {tree.interpret() for tree in result.enumerate_trees(target)} == {"C 1 2", "C 1 0"}
+    solution_space = synthesizer.construct_solution_space(target)
+    assert {tree.interpret() for tree in solution_space.enumerate_trees(target)} == {"C 1 2", "C 1 0"}
 
 
 def test_infinite_values() -> None:
@@ -102,13 +96,13 @@ def test_infinite_values() -> None:
 
     component_specifications = {
         c: DSL()
-        .parameter("a", "nat") # a in [0, 1, 2, ...]
-        .parameter("b", "nat", lambda vs: [vs["a"] - 1]) # b in [a-1]
-        .suffix(("c" @ Var("b")) ** ("c" @ Var("a"))), # c(b) -> c(a)
-        "ZERO": "c" @ Literal(0, "nat"), # c(0)
+        .parameter("a", "nat")  # a in [0, 1, 2, ...]
+        .parameter("b", "nat", lambda vs: [vs["a"] - 1])  # b in [a-1]
+        .suffix(("c" @ Var("b")) ** ("c" @ Var("a"))),  # c(b) -> c(a)
+        "ZERO": "c" @ Literal(0, "nat"),  # c(0)
     }
 
     synthesizer = Synthesizer(component_specifications, parameter_space)
-    grammar = synthesizer.construct_solution_space(target)
+    solution_space = synthesizer.construct_solution_space(target)
 
-    assert [tree.interpret() for tree in grammar.enumerate_trees(target)] == ["C 3 (C 2 (C 1 (ZERO)))"]
+    assert [tree.interpret() for tree in solution_space.enumerate_trees(target)] == ["C 3 (C 2 (C 1 (ZERO)))"]
