@@ -10,8 +10,10 @@ from cosy.types import Literal, Var
 def leaf() -> str:
     return "."
 
+
 def branch(depth: int, _new_depth: int, left: str, right: str) -> str:
     return f"(B {depth} {left} {right})"
+
 
 @pytest.fixture
 def component_specifications():
@@ -27,69 +29,47 @@ def component_specifications():
         .suffix(Var("depth")),
     }
 
+
 @pytest.fixture
 def query():
     return Literal(2, "int")
 
+
 def test_contains_tree(query, component_specifications) -> None:
     parameter_space = {"int": [0, 1, 2, 3]}
-    solution_space = Synthesizer(
-        component_specifications, parameter_space
-    ).construct_solution_space(query)
+    solution_space = Synthesizer(component_specifications, parameter_space).construct_solution_space(query)
 
     tree_correct = Tree(
-        branch, [
+        branch,
+        [
             Tree(2),
             Tree(1),
-            Tree(
-                branch, [
-                    Tree(1),
-                    Tree(0),
-                    Tree(leaf),
-                    Tree(leaf)
-                    ]),
-            Tree(
-                branch, [
-                    Tree(1),
-                    Tree(0),
-                    Tree(leaf),
-                    Tree(leaf)
-                    ])])
+            Tree(branch, [Tree(1), Tree(0), Tree(leaf), Tree(leaf)]),
+            Tree(branch, [Tree(1), Tree(0), Tree(leaf), Tree(leaf)]),
+        ],
+    )
 
     # a literals 0 are wrongly set to 1
     tree_wrong_1 = Tree(
-        branch, [
+        branch,
+        [
             Tree(2),
             Tree(1),
-            Tree(
-                branch, [
-                    Tree(1),
-                    Tree(1),
-                    Tree(leaf),
-                    Tree(leaf)
-                    ]),
-            Tree(
-                branch, [
-                    Tree(1),
-                    Tree(1),
-                    Tree(leaf),
-                    Tree(leaf)
-                    ])])
+            Tree(branch, [Tree(1), Tree(1), Tree(leaf), Tree(leaf)]),
+            Tree(branch, [Tree(1), Tree(1), Tree(leaf), Tree(leaf)]),
+        ],
+    )
 
     # a subtree is missing
     tree_wrong_2 = Tree(
-        branch, [
+        branch,
+        [
             Tree(2),
             Tree(1),
-            Tree(
-                branch, [
-                    Tree(1),
-                    Tree(0),
-                    Tree(leaf),
-                    Tree(leaf)
-                    ]),
+            Tree(branch, [Tree(1), Tree(0), Tree(leaf), Tree(leaf)]),
             Tree(leaf),
-            ])
+        ],
+    )
 
     assert solution_space.contains_tree(query, tree_correct)
     assert not solution_space.contains_tree(query, tree_wrong_1)

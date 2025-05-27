@@ -345,11 +345,7 @@ class Predicate:
     only_literals: bool
 
     def __str__(self) -> str:
-        return (
-            f"[{self.constraint.__name__}, only literals]"
-            if self.only_literals
-            else f"[{self.constraint.__name__}]"
-        )
+        return f"[{self.constraint.__name__}, only literals]" if self.only_literals else f"[{self.constraint.__name__}]"
 
 
 @dataclass(frozen=True)

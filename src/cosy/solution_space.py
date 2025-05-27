@@ -46,18 +46,12 @@ class RHSRule(Generic[NT, T, G]):
     @property
     def non_terminals(self) -> frozenset[NT]:
         """Set of non-terminals occurring in the body of the rule."""
-        return frozenset(
-            arg.origin.value
-            for arg in self.arguments
-            if isinstance(arg.origin, NonTerminalOrigin)
-        )
+        return frozenset(arg.origin.value for arg in self.arguments if isinstance(arg.origin, NonTerminalOrigin))
 
     @property
     def literal_substitution(self):
         return {
-            n.name: n.value.root
-            for n in self.arguments
-            if isinstance(n.origin, ConstantOrigin) and n.name is not None
+            n.name: n.value.root for n in self.arguments if isinstance(n.origin, ConstantOrigin) and n.name is not None
         }
 
 
@@ -92,8 +86,7 @@ class SolutionSpace(Generic[NT, T, G]):
 
     def show(self) -> str:
         return "\n".join(
-            f"{nt!s} ~> {' | '.join([str(subrule) for subrule in rule])}"
-            for nt, rule in self._rules.items()
+            f"{nt!s} ~> {' | '.join([str(subrule) for subrule in rule])}" for nt, rule in self._rules.items()
         )
 
     def prune(self) -> SolutionSpace[NT, T, G]:
@@ -116,9 +109,7 @@ class SolutionSpace(Generic[NT, T, G]):
             if n not in ground_types:
                 ground_types.add(n)
                 for m, non_terminals in inverse_grammar[n]:
-                    if m not in ground_types and all(
-                        t in ground_types for t in non_terminals
-                    ):
+                    if m not in ground_types and all(t in ground_types for t in non_terminals):
                         queue.add(m)
 
         return SolutionSpace[NT, T, G](
@@ -143,9 +134,7 @@ class SolutionSpace(Generic[NT, T, G]):
     ) -> Iterable[tuple[Tree[T] | None, ...]]:
         """Enumerate possible term vectors for a given list of non-terminals and existing terms. Use nt_term at least once (if given)."""
         if nt_term is None:
-            yield from product(
-                *([n] if n is None else existing_terms[n] for n in non_terminals)
-            )
+            yield from product(*([n] if n is None else existing_terms[n] for n in non_terminals))
         else:
             nt, term = nt_term
             for i, n in enumerate(non_terminals):
@@ -171,21 +160,13 @@ class SolutionSpace(Generic[NT, T, G]):
             return output_set
 
         named_non_terminals = [
-            a.origin.value
-            if isinstance(a.origin, NonTerminalOrigin) and a.name is not None
-            else None
+            a.origin.value if isinstance(a.origin, NonTerminalOrigin) and a.name is not None else None
             for a in rule.arguments
         ]
         unnamed_non_terminals = [
-            a.origin.value
-            if isinstance(a, NonTerminalOrigin) and a.name is None
-            else None
-            for a in rule.arguments
+            a.origin.value if isinstance(a, NonTerminalOrigin) and a.name is None else None for a in rule.arguments
         ]
-        literal_arguments = [
-            a.value if isinstance(a.origin, ConstantOrigin) else None
-            for a in rule.arguments
-        ]
+        literal_arguments = [a.value if isinstance(a.origin, ConstantOrigin) else None for a in rule.arguments]
 
         def interleave(
             parameters: Sequence[Tree[T] | None],
@@ -193,9 +174,7 @@ class SolutionSpace(Generic[NT, T, G]):
             arguments: Sequence[Tree[T] | None],
         ) -> Iterable[Tree[T]]:
             """Interleave parameters, literal arguments and arguments."""
-            for parameter, literal_argument, argument in zip(
-                parameters, literal_arguments, arguments, strict=False
-            ):
+            for parameter, literal_argument, argument in zip(parameters, literal_arguments, arguments, strict=False):
                 if parameter is not None:
                     yield parameter
                 elif literal_argument is not None:
@@ -229,37 +208,23 @@ class SolutionSpace(Generic[NT, T, G]):
             nt_term: tuple[NT, Tree[T]] | None,
         ) -> Iterable[tuple[Tree[T] | None, ...]]:
             """Enumerate all valid parameters for the rule."""
-            for parameters in self._enumerate_tree_vectors(
-                named_non_terminals, existing_terms, nt_term
-            ):
+            for parameters in self._enumerate_tree_vectors(named_non_terminals, existing_terms, nt_term):
                 substitution = specific_substitution(parameters)
                 if all(predicate(substitution) for predicate in rule.predicates):
                     yield parameters
 
         for parameters in valid_parameters(nt_old_term):
-            for arguments in self._enumerate_tree_vectors(
-                unnamed_non_terminals, existing_terms
-            ):
-                output_set.add(
-                    construct_tree(rule, parameters, literal_arguments, arguments)
-                )
+            for arguments in self._enumerate_tree_vectors(unnamed_non_terminals, existing_terms):
+                output_set.add(construct_tree(rule, parameters, literal_arguments, arguments))
                 if max_count is not None and len(output_set) >= max_count:
                     return output_set
 
         if nt_old_term is not None:
             all_parameters: deque[tuple[Tree[T] | None, ...]] | None = None
-            for arguments in self._enumerate_tree_vectors(
-                unnamed_non_terminals, existing_terms
-            ):
-                all_parameters = (
-                    all_parameters
-                    if all_parameters is not None
-                    else deque(valid_parameters(None))
-                )
+            for arguments in self._enumerate_tree_vectors(unnamed_non_terminals, existing_terms):
+                all_parameters = all_parameters if all_parameters is not None else deque(valid_parameters(None))
                 for parameters in all_parameters:
-                    output_set.add(
-                        construct_tree(rule, parameters, literal_arguments, arguments)
-                    )
+                    output_set.add(construct_tree(rule, parameters, literal_arguments, arguments))
                     if max_count is not None and len(output_set) >= max_count:
                         return output_set
         return output_set
@@ -276,13 +241,9 @@ class SolutionSpace(Generic[NT, T, G]):
         if start not in self.nonterminals():
             return
 
-        queues: dict[NT, PriorityQueue[Tree[T]]] = {
-            n: PriorityQueue() for n in self.nonterminals()
-        }
+        queues: dict[NT, PriorityQueue[Tree[T]]] = {n: PriorityQueue() for n in self.nonterminals()}
         existing_terms: dict[NT, set[Tree[T]]] = {n: set() for n in self.nonterminals()}
-        inverse_grammar: dict[NT, deque[tuple[NT, RHSRule[NT, T, G]]]] = {
-            n: deque() for n in self.nonterminals()
-        }
+        inverse_grammar: dict[NT, deque[tuple[NT, RHSRule[NT, T, G]]]] = {n: deque() for n in self.nonterminals()}
         all_results: set[Tree[T]] = set()
 
         for n, exprs in self._rules.items():
@@ -301,9 +262,9 @@ class SolutionSpace(Generic[NT, T, G]):
 
         current_bucket_size = 1
 
-        while (
-            max_bucket_size is None or current_bucket_size <= max_bucket_size
-        ) and any(not queue.empty() for queue in queues.values()):
+        while (max_bucket_size is None or current_bucket_size <= max_bucket_size) and any(
+            not queue.empty() for queue in queues.values()
+        ):
             non_terminals = {n for n in self.nonterminals() if not queues[n].empty()}
 
             while non_terminals:
@@ -318,22 +279,15 @@ class SolutionSpace(Generic[NT, T, G]):
                         if len(existing_terms[m]) < current_bucket_size:
                             non_terminals.add(m)
                         if m == start:
-                            for new_term in self._generate_new_trees(
-                                expr, existing_terms, max_count, (n, term)
-                            ):
+                            for new_term in self._generate_new_trees(expr, existing_terms, max_count, (n, term)):
                                 if new_term not in all_results:
-                                    if (
-                                        max_count is not None
-                                        and len(all_results) >= max_count
-                                    ):
+                                    if max_count is not None and len(all_results) >= max_count:
                                         return
                                     yield new_term
                                     all_results.add(new_term)
                                     queues[start].put(new_term)
                         else:
-                            for new_term in self._generate_new_trees(
-                                expr, existing_terms, max_bucket_size, (n, term)
-                            ):
+                            for new_term in self._generate_new_trees(expr, existing_terms, max_bucket_size, (n, term)):
                                 queues[m].put(new_term)
             current_bucket_size += 1
         return
@@ -362,19 +316,14 @@ class SolutionSpace(Generic[NT, T, G]):
                     and rhs.terminal == tree.root
                     and all(
                         argument.value == child
-                        for argument, child in zip(
-                            rhs.arguments, tree.children, strict=True
-                        )
+                        for argument, child in zip(rhs.arguments, tree.children, strict=True)
                         if isinstance(argument.origin, ConstantOrigin)
                     )
                 ]
 
                 # if there is a relevant rule containing only TerminalArgument which are equal to the children of the tree
                 if any(
-                    all(
-                        isinstance(argument.origin, ConstantOrigin)
-                        for argument in rhs.arguments
-                    )
+                    all(isinstance(argument.origin, ConstantOrigin) for argument in rhs.arguments)
                     for rhs in relevant_rhss
                 ):
                     results.append(True)
@@ -388,34 +337,25 @@ class SolutionSpace(Generic[NT, T, G]):
 
                 for rhs in relevant_rhss:
                     substitution = {
-                        argument.name: child.root
-                        if isinstance(argument.origin, ConstantOrigin)
-                        else child
-                        for argument, child in zip(
-                            rhs.arguments, tree.children, strict=True
-                        )
+                        argument.name: child.root if isinstance(argument.origin, ConstantOrigin) else child
+                        for argument, child in zip(rhs.arguments, tree.children, strict=True)
                         if argument.name is not None
                     }
 
                     # conjunction of the results for individual arguments in the rule
                     def and_inputs(
                         count: int = sum(
-                            1
-                            for argument in rhs.arguments
-                            if isinstance(argument.origin, NonTerminalOrigin)
+                            1 for argument in rhs.arguments if isinstance(argument.origin, NonTerminalOrigin)
                         ),
                         substitution: dict[str, Any] = substitution,
                         predicates=rhs.predicates,
                     ) -> None:
                         results.append(
-                            all(get_inputs(count))
-                            and all(predicate(substitution) for predicate in predicates)
+                            all(get_inputs(count)) and all(predicate(substitution) for predicate in predicates)
                         )
 
                     stack.append(and_inputs)
-                    for argument, child in zip(
-                        rhs.arguments, tree.children, strict=True
-                    ):
+                    for argument, child in zip(rhs.arguments, tree.children, strict=True):
                         if isinstance(argument.origin, NonTerminalOrigin):
                             stack.append((argument.origin.value, child))
             elif isinstance(task, FunctionType):

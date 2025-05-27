@@ -83,9 +83,7 @@ class DSL:
         """
 
         def new_result(suffix: Specification, result=self._result) -> Specification:
-            return result(
-                Abstraction(LiteralParameter(name, group, candidates), suffix)
-            )
+            return result(Abstraction(LiteralParameter(name, group, candidates), suffix))
 
         self._result = new_result
         return self
@@ -112,9 +110,7 @@ class DSL:
         self._result = new_result
         return self
 
-    def parameter_constraint(
-        self, constraint: Callable[[Mapping[str, Any]], bool]
-    ) -> DSL:
+    def parameter_constraint(self, constraint: Callable[[Mapping[str, Any]], bool]) -> DSL:
         """
         Constraint on the previously defined parameter variables.
 
