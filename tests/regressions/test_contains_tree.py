@@ -1,6 +1,5 @@
 # regression test for contains_tree
 import pytest
-
 from cosy.dsl import DSL
 from cosy.synthesizer import Synthesizer
 from cosy.tree import Tree

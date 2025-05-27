@@ -3,7 +3,6 @@ from itertools import combinations
 from random import Random
 
 import pytest
-
 from cosy.combinatorics import maximal_elements, minimal_covers
 
 
