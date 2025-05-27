@@ -15,7 +15,14 @@ if TYPE_CHECKING:
 
 from typing import Any
 
-from cosy.types import Abstraction, Implication, LiteralParameter, Predicate, TermParameter, Type
+from cosy.types import (
+    Abstraction,
+    Implication,
+    LiteralParameter,
+    Predicate,
+    TermParameter,
+    Type,
+)
 
 
 class DSL:
@@ -48,7 +55,10 @@ class DSL:
         self._result: Callable[[Specification], Specification] = lambda suffix: suffix
 
     def parameter(  #
-        self, name: str, group: str, candidates: Callable[[dict[str, Any]], Sequence[Any]] | None = None
+        self,
+        name: str,
+        group: str,
+        candidates: Callable[[dict[str, Any]], Sequence[Any]] | None = None,
     ) -> DSL:
         """
         Introduce a new parameter variable.
@@ -73,7 +83,9 @@ class DSL:
         """
 
         def new_result(suffix: Specification, result=self._result) -> Specification:
-            return result(Abstraction(LiteralParameter(name, group, candidates), suffix))
+            return result(
+                Abstraction(LiteralParameter(name, group, candidates), suffix)
+            )
 
         self._result = new_result
         return self
@@ -100,7 +112,9 @@ class DSL:
         self._result = new_result
         return self
 
-    def parameter_constraint(self, constraint: Callable[[Mapping[str, Any]], bool]) -> DSL:
+    def parameter_constraint(
+        self, constraint: Callable[[Mapping[str, Any]], bool]
+    ) -> DSL:
         """
         Constraint on the previously defined parameter variables.
 

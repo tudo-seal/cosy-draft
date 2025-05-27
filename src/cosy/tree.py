@@ -13,6 +13,7 @@ from typing import Any, Generic, TypeVar
 
 T = TypeVar("T", bound=Hashable)
 
+
 class Tree(Generic[T]):
     root: T
     children: tuple["Tree[T]", ...]
@@ -34,11 +35,17 @@ class Tree(Generic[T]):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Tree):
             return False
-        return self.size == other.size and self.root == other.root and self.children == other.children
+        return (
+            self.size == other.size
+            and self.root == other.root
+            and self.children == other.children
+        )
 
     def __rec_to_str__(self, *, outermost: bool) -> str:
         str_root = [f"{self.root!s}"]
-        str_args = [f"{subtree.__rec_to_str__(outermost=False)}" for subtree in self.children]
+        str_args = [
+            f"{subtree.__rec_to_str__(outermost=False)}" for subtree in self.children
+        ]
 
         strings = str_root + str_args
         if not outermost and len(strings) > 1:
@@ -65,12 +72,16 @@ class Tree(Generic[T]):
             (c, n) = combinators.pop()
             parameters_of_c: Sequence[Parameter] = []
             current_combinator: partial[Any] | T | Callable[..., Any] = (
-                c if interpretation is None or c not in interpretation else interpretation[c]
+                c
+                if interpretation is None or c not in interpretation
+                else interpretation[c]
             )
 
             if callable(current_combinator):
                 try:
-                    parameters_of_c = list(signature(current_combinator).parameters.values())
+                    parameters_of_c = list(
+                        signature(current_combinator).parameters.values()
+                    )
                 except ValueError as exc:
                     msg = (
                         f"Interpretation of combinator {c} does not expose a signature. "
@@ -93,11 +104,17 @@ class Tree(Generic[T]):
 
                 use_partial = False
 
-                simple_arity = len(list(filter(lambda x: x.default == _empty, parameters_of_c)))
-                default_arity = len(list(filter(lambda x: x.default != _empty, parameters_of_c)))
+                simple_arity = len(
+                    list(filter(lambda x: x.default == _empty, parameters_of_c))
+                )
+                default_arity = len(
+                    list(filter(lambda x: x.default != _empty, parameters_of_c))
+                )
 
                 # if any parameter is marked as var_args, we need to use all available arguments
-                pop_all = any(x.kind == _ParameterKind.VAR_POSITIONAL for x in parameters_of_c)
+                pop_all = any(
+                    x.kind == _ParameterKind.VAR_POSITIONAL for x in parameters_of_c
+                )
 
                 # If a var_args parameter is found, we need to subtract it from the normal parameters.
                 # Note: python does only allow one parameter in the form of *arg
@@ -110,7 +127,8 @@ class Tree(Generic[T]):
                     use_partial = True
 
                 fixed_parameters: deque[Any] = deque(
-                    arguments.popleft() for _ in range(min(simple_arity, len(arguments)))
+                    arguments.popleft()
+                    for _ in range(min(simple_arity, len(arguments)))
                 )
 
                 var_parameters: deque[Any] = deque()
@@ -131,7 +149,9 @@ class Tree(Generic[T]):
                         *default_parameters,
                     )
                 else:
-                    current_combinator = current_combinator(*fixed_parameters, *var_parameters, *default_parameters)
+                    current_combinator = current_combinator(
+                        *fixed_parameters, *var_parameters, *default_parameters
+                    )
 
             results.append(current_combinator)
         return results.pop()

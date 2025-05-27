@@ -192,7 +192,10 @@ class Arrow(Type):
     def subst(self, groups: Mapping[str, str], substitution: dict[str, Any]) -> Type:
         if not any(var in substitution for var in self.free_vars):
             return self
-        return Arrow(self.source.subst(groups, substitution), self.target.subst(groups, substitution))
+        return Arrow(
+            self.source.subst(groups, substitution),
+            self.target.subst(groups, substitution),
+        )
 
 
 @dataclass(frozen=True)
@@ -230,7 +233,10 @@ class Intersection(Type):
     def subst(self, groups: Mapping[str, str], substitution: dict[str, Any]) -> Type:
         if not any(var in substitution for var in self.free_vars):
             return self
-        return Intersection(self.left.subst(groups, substitution), self.right.subst(groups, substitution))
+        return Intersection(
+            self.left.subst(groups, substitution),
+            self.right.subst(groups, substitution),
+        )
 
 
 @dataclass(frozen=True)
@@ -339,7 +345,11 @@ class Predicate:
     only_literals: bool
 
     def __str__(self) -> str:
-        return f"[{self.constraint.__name__}, only literals]" if self.only_literals else f"[{self.constraint.__name__}]"
+        return (
+            f"[{self.constraint.__name__}, only literals]"
+            if self.only_literals
+            else f"[{self.constraint.__name__}]"
+        )
 
 
 @dataclass(frozen=True)

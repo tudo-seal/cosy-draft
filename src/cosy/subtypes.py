@@ -34,7 +34,10 @@ class Subtypes:
                             if value2 == value1 and group1 == group2:
                                 return True
                         case Var(name1):
-                            if groups[name1] == supertype.group and substitutions[name1] == supertype.value:
+                            if (
+                                groups[name1] == supertype.group
+                                and substitutions[name1] == supertype.value
+                            ):
                                 return True
                         case Intersection(l, r):
                             subtypes.extend((l, r))
@@ -48,21 +51,27 @@ class Subtypes:
                                 casted_constr.append(arg1)
                         case Intersection(l, r):
                             subtypes.extend((l, r))
-                return len(casted_constr) != 0 and self._check_subtype_rec(casted_constr, arg2, groups, substitutions)
+                return len(casted_constr) != 0 and self._check_subtype_rec(
+                    casted_constr, arg2, groups, substitutions
+                )
             case Arrow(src2, tgt2):
                 casted_arr: deque[Type] = deque()
                 while subtypes:
                     match subtypes.pop():
                         case Arrow(src1, tgt1):
-                            if self._check_subtype_rec(deque((src2,)), src1, groups, substitutions):
+                            if self._check_subtype_rec(
+                                deque((src2,)), src1, groups, substitutions
+                            ):
                                 casted_arr.append(tgt1)
                         case Intersection(l, r):
                             subtypes.extend((l, r))
-                return len(casted_arr) != 0 and self._check_subtype_rec(casted_arr, tgt2, groups, substitutions)
-            case Intersection(l, r):
-                return self._check_subtype_rec(subtypes.copy(), l, groups, substitutions) and self._check_subtype_rec(
-                    subtypes, r, groups, substitutions
+                return len(casted_arr) != 0 and self._check_subtype_rec(
+                    casted_arr, tgt2, groups, substitutions
                 )
+            case Intersection(l, r):
+                return self._check_subtype_rec(
+                    subtypes.copy(), l, groups, substitutions
+                ) and self._check_subtype_rec(subtypes, r, groups, substitutions)
             case Var(name):
                 while subtypes:
                     match subtypes.pop():
@@ -77,13 +86,21 @@ class Subtypes:
                 raise TypeError(msg)
 
     def check_subtype(
-        self, subtype: Type, supertype: Type, groups: Mapping[str, str], substitutions: Mapping[str, Literal]
+        self,
+        subtype: Type,
+        supertype: Type,
+        groups: Mapping[str, str],
+        substitutions: Mapping[str, Literal],
     ) -> bool:
         """Decides whether subtype <= supertype with respect to intersection type subtyping."""
 
-        return self._check_subtype_rec(deque((subtype,)), supertype, groups, substitutions)
+        return self._check_subtype_rec(
+            deque((subtype,)), supertype, groups, substitutions
+        )
 
-    def infer_substitution(self, subtype: Type, path: Type, groups: Mapping[str, str]) -> dict[str, Any] | None:
+    def infer_substitution(
+        self, subtype: Type, path: Type, groups: Mapping[str, str]
+    ) -> dict[str, Any] | None:
         """Infers a unique substitution S such that S(subtype) <= path where path is closed. Returns None or Ambiguous is no solution exists or multiple solutions exist respectively."""
 
         if subtype.is_omega:
@@ -121,11 +138,17 @@ class Subtypes:
                 if substitution2 is None:
                     return substitution1
                 if all(
-                    (name in substitution2 and substitution2[name] == value for name, value in substitution1.items())
+                    (
+                        name in substitution2 and substitution2[name] == value
+                        for name, value in substitution1.items()
+                    )
                 ):
                     return substitution1  # substitution1 included in substitution2
                 if all(
-                    (name in substitution1 and substitution1[name] == value for name, value in substitution2.items())
+                    (
+                        name in substitution1 and substitution1[name] == value
+                        for name, value in substitution2.items()
+                    )
                 ):
                     return substitution2  # substitution2 included in substitution1
                 return {}
@@ -144,12 +167,16 @@ class Subtypes:
         all_types: set[str] = set(env.keys())
         for v in env.values():
             all_types.update(v)
-        result: dict[str, set[str]] = {subtype: {subtype}.union(env.get(subtype, set())) for subtype in all_types}
+        result: dict[str, set[str]] = {
+            subtype: {subtype}.union(env.get(subtype, set())) for subtype in all_types
+        }
         return result
 
     @staticmethod
     def _transitive_closure(env: Mapping[str, set[str]]) -> dict[str, set[str]]:
-        result: dict[str, set[str]] = {subtype: supertypes.copy() for (subtype, supertypes) in env.items()}
+        result: dict[str, set[str]] = {
+            subtype: supertypes.copy() for (subtype, supertypes) in env.items()
+        }
         has_changed = True
 
         while has_changed:
@@ -157,7 +184,9 @@ class Subtypes:
             for known_supertypes in result.values():
                 for supertype in known_supertypes.copy():
                     to_add: set[str] = {
-                        new_supertype for new_supertype in result[supertype] if new_supertype not in known_supertypes
+                        new_supertype
+                        for new_supertype in result[supertype]
+                        if new_supertype not in known_supertypes
                     }
                     if to_add:
                         has_changed = True

@@ -25,7 +25,13 @@ from typing import (
 )
 
 from cosy.combinatorics import maximal_elements, minimal_covers
-from cosy.solution_space import Argument, ConstantOrigin, NonTerminalOrigin, RHSRule, SolutionSpace
+from cosy.solution_space import (
+    Argument,
+    ConstantOrigin,
+    NonTerminalOrigin,
+    RHSRule,
+    SolutionSpace,
+)
 from cosy.subtypes import Subtypes, Taxonomy
 from cosy.tree import Tree
 from cosy.types import (
@@ -79,9 +85,12 @@ class Synthesizer(Generic[C]):
         parameter_space: ParameterSpace | None = None,
         taxonomy: Taxonomy | None = None,
     ):
-        self.literals: ParameterSpace = {} if parameter_space is None else dict(parameter_space.items())
+        self.literals: ParameterSpace = (
+            {} if parameter_space is None else dict(parameter_space.items())
+        )
         self.repository: tuple[tuple[C, CombinatorInfo], ...] = tuple(
-            (c, Synthesizer._function_types(self.literals, ty)) for c, ty in component_specifications.items()
+            (c, Synthesizer._function_types(self.literals, ty))
+            for c, ty in component_specifications.items()
         )
         self.subtypes = Subtypes(taxonomy if taxonomy is not None else {})
 
@@ -149,7 +158,9 @@ class Synthesizer(Generic[C]):
             ]
 
         term_predicates: tuple[Callable[[dict[str, Any]], bool], ...] = tuple(
-            p.constraint for p in prefix if isinstance(p, Predicate) and not p.only_literals
+            p.constraint
+            for p in prefix
+            if isinstance(p, Predicate) and not p.only_literals
         )
         return CombinatorInfo(prefix, groups, term_predicates, None, multiarrows)
 
@@ -161,7 +172,9 @@ class Synthesizer(Generic[C]):
         """Enumerate all substitutions for the given parameters fairly.
         Take initial_substitution with inferred literals into account."""
 
-        stack: deque[tuple[dict[str, Any], int, Iterator[Any] | None]] = deque([(substitution, 0, None)])
+        stack: deque[tuple[dict[str, Any], int, Iterator[Any] | None]] = deque(
+            [(substitution, 0, None)]
+        )
 
         while stack:
             substitution, index, generator = stack.pop()
@@ -174,7 +187,10 @@ class Synthesizer(Generic[C]):
                 if generator is None:
                     if parameter.name in substitution:
                         value = substitution[parameter.name]
-                        if parameter.values is not None and value not in parameter.values(substitution):
+                        if (
+                            parameter.values is not None
+                            and value not in parameter.values(substitution)
+                        ):
                             # the inferred value is not in the set of values
                             continue
                         if value not in self.literals[parameter.group]:
@@ -182,21 +198,29 @@ class Synthesizer(Generic[C]):
                             continue
                         stack.appendleft((substitution, index + 1, None))
                     elif parameter.values is not None:
-                        stack.appendleft((substitution, index, iter(parameter.values(substitution))))
+                        stack.appendleft(
+                            (substitution, index, iter(parameter.values(substitution)))
+                        )
                     else:
                         concrete_values = self.literals[parameter.group]
                         if not isinstance(concrete_values, Iterable):
-                            msg = f"The value of {parameter.name} could not be inferred."
+                            msg = (
+                                f"The value of {parameter.name} could not be inferred."
+                            )
                             raise RuntimeError(msg)
                         else:
-                            stack.appendleft((substitution, index, iter(concrete_values)))
+                            stack.appendleft(
+                                (substitution, index, iter(concrete_values))
+                            )
                 else:
                     try:
                         value = next(generator)
                     except StopIteration:
                         continue
                     if value in self.literals[parameter.group]:
-                        stack.appendleft(({**substitution, parameter.name: value}, index + 1, None))
+                        stack.appendleft(
+                            ({**substitution, parameter.name: value}, index + 1, None)
+                        )
                     stack.appendleft((substitution, index, generator))
 
             elif isinstance(parameter, Predicate) and parameter.only_literals:
@@ -223,16 +247,22 @@ class Synthesizer(Generic[C]):
             return []
 
         # intersect corresponding arguments of multi-arrows in each cover
-        def intersect_args(args1: Iterable[Type], args2: Iterable[Type]) -> tuple[Type, ...]:
+        def intersect_args(
+            args1: Iterable[Type], args2: Iterable[Type]
+        ) -> tuple[Type, ...]:
             return tuple(Intersection(a, b) for a, b in zip(args1, args2, strict=False))
 
-        intersected_args: Generator[list[Type]] = (list(reduce(intersect_args, (m.args for m in ms))) for ms in covers)
+        intersected_args: Generator[list[Type]] = (
+            list(reduce(intersect_args, (m.args for m in ms))) for ms in covers
+        )
 
         # consider only maximal argument vectors
         def compare_args(args1, args2) -> bool:
             return all(
                 map(
-                    lambda a, b: self.subtypes.check_subtype(a, b, groups, substitution),
+                    lambda a, b: self.subtypes.check_subtype(
+                        a, b, groups, substitution
+                    ),
                     args1,
                     args2,
                 )
@@ -261,7 +291,9 @@ class Synthesizer(Generic[C]):
 
             for nary_types in combinator_type:
                 for ty in nary_types:
-                    substitution = self.subtypes.infer_substitution(ty.target, path, groups)
+                    substitution = self.subtypes.infer_substitution(
+                        ty.target, path, groups
+                    )
                     if substitution is None:
                         continue
                     if unique_substitution is None:
@@ -287,7 +319,9 @@ class Synthesizer(Generic[C]):
 
         return result
 
-    def construct_solution_space_rules(self, *targets: Type) -> Generator[tuple[Type, RHSRule]]:
+    def construct_solution_space_rules(
+        self, *targets: Type
+    ) -> Generator[tuple[Type, RHSRule]]:
         """Generate logic program rules for the given target types."""
 
         # current target types
@@ -311,7 +345,9 @@ class Synthesizer(Generic[C]):
                     for combinator, combinator_info in self.repository:
                         # Compute necessary substitutions
                         substitution = self._necessary_substitution(
-                            current_target.organized, combinator_info.type, combinator_info.groups
+                            current_target.organized,
+                            combinator_info.type,
+                            combinator_info.groups,
                         )
 
                         # If there cannot be a suitable substitution, ignore this combinator
@@ -322,9 +358,20 @@ class Synthesizer(Generic[C]):
                         selected_instantiations = self._enumerate_substitutions(
                             combinator_info.prefix, substitution
                         )
-                        stack.appendleft((current_target, (combinator, combinator_info, iter(selected_instantiations))))
+                        stack.appendleft(
+                            (
+                                current_target,
+                                (
+                                    combinator,
+                                    combinator_info,
+                                    iter(selected_instantiations),
+                                ),
+                            )
+                        )
                 else:
-                    combinator, combinator_info, selected_instantiations = current_target_info
+                    combinator, combinator_info, selected_instantiations = (
+                        current_target_info
+                    )
                     instantiation = next(selected_instantiations, None)
                     if instantiation is not None:
                         stack.appendleft((current_target, current_target_info))
@@ -333,14 +380,31 @@ class Synthesizer(Generic[C]):
                         # and every arity of the combinator type
                         for nary_types in combinator_info.type:
                             for subquery in self._subqueries(
-                                nary_types, current_target.organized, combinator_info.groups, instantiation
+                                nary_types,
+                                current_target.organized,
+                                combinator_info.groups,
+                                instantiation,
                             ):
-                                if named_arguments is None:  # do this only once for each instantiation
+                                if (
+                                    named_arguments is None
+                                ):  # do this only once for each instantiation
                                     named_arguments = tuple(
-                                        Argument(param.name, ConstantOrigin(combinator_info.groups[param.name]), Tree(instantiation[param.name]))
+                                        Argument(
+                                            param.name,
+                                            ConstantOrigin(
+                                                combinator_info.groups[param.name]
+                                            ),
+                                            Tree(instantiation[param.name]),
+                                        )
                                         if isinstance(param, LiteralParameter)
                                         else Argument(
-                                            param.name, NonTerminalOrigin(param.group.subst(combinator_info.groups, instantiation))
+                                            param.name,
+                                            NonTerminalOrigin(
+                                                param.group.subst(
+                                                    combinator_info.groups,
+                                                    instantiation,
+                                                )
+                                            ),
                                         )
                                         for param in combinator_info.prefix
                                         if isinstance(param, Parameter)
@@ -348,11 +412,20 @@ class Synthesizer(Generic[C]):
                                     stack.extendleft(
                                         (argument.origin.value, None)
                                         for argument in named_arguments
-                                        if isinstance(argument.origin, NonTerminalOrigin)
+                                        if isinstance(
+                                            argument.origin, NonTerminalOrigin
+                                        )
                                     )
 
                                 anonymous_arguments: tuple[Argument, ...] = tuple(
-                                    Argument(None, NonTerminalOrigin(ty.subst(combinator_info.groups, instantiation)))
+                                    Argument(
+                                        None,
+                                        NonTerminalOrigin(
+                                            ty.subst(
+                                                combinator_info.groups, instantiation
+                                            )
+                                        ),
+                                    )
                                     for ty in subquery
                                 )
                                 yield (
@@ -363,7 +436,9 @@ class Synthesizer(Generic[C]):
                                         combinator,
                                     ),
                                 )
-                                stack.extendleft((q.origin.value, None) for q in anonymous_arguments)
+                                stack.extendleft(
+                                    (q.origin.value, None) for q in anonymous_arguments
+                                )
 
     def construct_solution_space(self, *targets: Type) -> SolutionSpace[Type, C, Any]:
         """Constructs a logic program in the current environment for the given target types."""

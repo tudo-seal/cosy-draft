@@ -111,11 +111,21 @@ class Inspector:
                         groups[param.name] = param.group
                         for n, g in all_groups:
                             if n == param.name and g != param.group:
-                                self._logger.info("%s is used both as %s and %s", param.name, param.group, g)
+                                self._logger.info(
+                                    "%s is used both as %s and %s",
+                                    param.name,
+                                    param.group,
+                                    g,
+                                )
                         all_groups.add((param.name, param.group))
-                    if isinstance(param, LiteralParameter) and param.group not in parameter_space:
+                    if (
+                        isinstance(param, LiteralParameter)
+                        and param.group not in parameter_space
+                    ):
                         # check if group is defined in the parameter space
-                        msg = f"Group {param.group} is not defined in the parameter space"
+                        msg = (
+                            f"Group {param.group} is not defined in the parameter space"
+                        )
                         raise ValueError(msg)
                     if isinstance(param, TermParameter):
                         parameter_names.update(param.group.free_vars)
@@ -136,7 +146,9 @@ class Inspector:
             # check if every abstracted variable is used
             for var, group in groups.items():
                 if isinstance(group, str) and var not in parameter_names:
-                    self._logger.info("Variable %s is abstracted via a parameter but not used", var)
+                    self._logger.info(
+                        "Variable %s is abstracted via a parameter but not used", var
+                    )
 
         all_group_names = {g for n, g in all_groups if isinstance(g, str)}
 
@@ -149,7 +161,9 @@ class Inspector:
         for constructors in all_constructors:
             for constructor in constructors:
                 if sum(1 for cs in all_constructors if constructor in cs) == 1:
-                    self._logger.info("Concept %s is used in only one component", constructor)
+                    self._logger.info(
+                        "Concept %s is used in only one component", constructor
+                    )
 
         # check if every concept in the taxonomy is used
         for name, subtypes in taxonomy.items():

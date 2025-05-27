@@ -39,7 +39,9 @@ class CoSy(Generic[T]):
         self.component_specifications = component_specifications
         self.parameter_space = parameter_space
         self.taxonomy = taxonomy if taxonomy is not None else {}
-        self._synthesizer = Synthesizer(component_specifications, parameter_space, self.taxonomy)
+        self._synthesizer = Synthesizer(
+            component_specifications, parameter_space, self.taxonomy
+        )
 
     def solve(self, query: Type, max_count: int = 100) -> Iterable[Any]:
         """
