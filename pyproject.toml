@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "cosy"
+name = "combinatory-synthesizer"
 dynamic = ["version"]
-description = ''
+description = 'Type based synthesis framework using inhabitation in FCLP'
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -35,6 +35,9 @@ Source = "https://github.com/Jekannadar/cosy"
 [tool.hatch.version]
 path = "src/cosy/__about__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/cosy"]
+
 [tool.hatch.envs.types]
 extra-dependencies = [
   "mypy>=1.0.0",
@@ -62,7 +65,4 @@ exclude_lines = [
   "@abstractmethod",
   "@abc.abstractmethod"
 ]
-
-[tool.ruff.lint]
-#extend-ignore = ["G004"]
 
