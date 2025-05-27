@@ -1,4 +1,6 @@
 # regression test for contains_tree
+from collections.abc import Callable
+
 import pytest
 from cosy.dsl import DSL
 from cosy.synthesizer import Synthesizer
@@ -34,11 +36,14 @@ def query():
     return Literal(2, "int")
 
 
+T = int | Callable
+
+
 def test_contains_tree(query, component_specifications) -> None:
     parameter_space = {"int": [0, 1, 2, 3]}
     solution_space = Synthesizer(component_specifications, parameter_space).construct_solution_space(query)
 
-    tree_correct = Tree(
+    tree_correct = Tree[T](
         branch,
         [
             Tree(2),
@@ -49,7 +54,7 @@ def test_contains_tree(query, component_specifications) -> None:
     )
 
     # a literals 0 are wrongly set to 1
-    tree_wrong_1 = Tree(
+    tree_wrong_1 = Tree[T](
         branch,
         [
             Tree(2),
@@ -60,7 +65,7 @@ def test_contains_tree(query, component_specifications) -> None:
     )
 
     # a subtree is missing
-    tree_wrong_2 = Tree(
+    tree_wrong_2 = Tree[T](
         branch,
         [
             Tree(2),
