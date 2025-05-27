@@ -164,7 +164,7 @@ class SolutionSpace(Generic[NT, T, G]):
             for a in rule.arguments
         ]
         unnamed_non_terminals = [
-            a.origin.value if isinstance(a, NonTerminalOrigin) and a.name is None else None for a in rule.arguments
+            a.origin.value if isinstance(a.origin, NonTerminalOrigin) and a.name is None else None for a in rule.arguments
         ]
         literal_arguments = [a.value if isinstance(a.origin, ConstantOrigin) else None for a in rule.arguments]
 
