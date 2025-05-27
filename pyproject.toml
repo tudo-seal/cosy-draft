@@ -66,3 +66,8 @@ exclude_lines = [
   "@abc.abstractmethod"
 ]
 
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/**/*.py" = [
+    "FBT", # bools as args
+]
+
