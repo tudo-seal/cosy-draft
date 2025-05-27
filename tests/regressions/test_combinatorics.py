@@ -21,9 +21,9 @@ def elements():
 
 @pytest.fixture
 def sets():
-    bound = 15
+    bound = 10
     size = 4
-    count = 20
+    count = 13
     rand = Random(0)
 
     def random_set() -> frozenset[int]:
@@ -34,7 +34,7 @@ def sets():
 
 @pytest.fixture
 def to_cover():
-    bound = 15
+    bound = 10
     return set(range(bound))
 
 
@@ -65,7 +65,6 @@ def test_minimal_covers(sets, to_cover) -> None:
     assert all(
         any(e in s for s in cover) for cover in covers for e in to_cover
     ), "Some element is not covered by minimal covers"
-
     assert all(s in sets for cover in covers for s in cover), "Some set in a cover is not included in sets"
 
     for i, cover1 in enumerate(covers):

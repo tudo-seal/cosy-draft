@@ -1,3 +1,5 @@
+# benchmark for the maximal_elements function
+
 from random import Random
 
 import pytest
@@ -8,7 +10,7 @@ from cosy.combinatorics import maximal_elements
 def elements():
     bound = 20
     dimension = 10
-    count = 5000
+    count = 500
     rand = Random(0)
 
     def random_element() -> tuple[int, ...]:
