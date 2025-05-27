@@ -385,7 +385,7 @@ class Synthesizer(Generic[C]):
                                 )
                                 yield (
                                     current_target,
-                                    RHSRule[Type, Any, Any](
+                                    RHSRule[Type, Any, str](
                                         (*named_arguments, *anonymous_arguments),
                                         combinator_info.term_predicates,
                                         combinator,
@@ -393,10 +393,10 @@ class Synthesizer(Generic[C]):
                                 )
                                 stack.extendleft((q.origin, None) for q in anonymous_arguments)
 
-    def construct_solution_space(self, *targets: Type) -> SolutionSpace[Type, C, Any]:
+    def construct_solution_space(self, *targets: Type) -> SolutionSpace[Type, C, str]:
         """Constructs a logic program in the current environment for the given target types."""
 
-        solution_space: SolutionSpace[Type, C, Any] = SolutionSpace()
+        solution_space: SolutionSpace[Type, C, str] = SolutionSpace()
         for nt, rule in self.construct_solution_space_rules(*targets):
             solution_space.add_rule(nt, rule.terminal, rule.arguments, rule.predicates)
 
