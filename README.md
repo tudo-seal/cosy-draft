@@ -1,7 +1,7 @@
 # CoSy
 
-[![PyPI - Version](https://img.shields.io/pypi/v/cosy.svg)](https://pypi.org/project/cosy)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cosy.svg)](https://pypi.org/project/cosy)
+[![PyPI - Version](https://img.shields.io/pypi/v/combinatory-synthesizer.svg)](https://pypi.org/project/combinatory-synthesizer)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/combinatory-synthesizer.svg)](https://pypi.org/project/combinatory-synthesizer)
 
 -----
 
