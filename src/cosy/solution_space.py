@@ -1,79 +1,72 @@
+"""Solution space given by a logic program."""
+
 from __future__ import annotations
 
 from collections import defaultdict, deque
-from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from collections.abc import Callable, Generator, Hashable, Iterable, Mapping, Sequence
+from dataclasses import dataclass
 from itertools import product
 from queue import PriorityQueue
+from types import FunctionType
 from typing import Any, Generic, TypeVar
 
 from cosy.tree import Tree
 
 NT = TypeVar("NT", bound=Hashable)  # type of non-terminals
 T = TypeVar("T", bound=Hashable)  # type of terminals
-
-
-@dataclass(frozen=True)
-class TerminalArgument(Generic[T]):
-    name: str
-    value: T
-
+G = TypeVar("G", bound=Hashable)  # type of constants
 
 @dataclass(frozen=True)
-class NonTerminalArgument(Generic[NT]):
-    name: str | None
+class NonTerminalOrigin(Generic[NT]):
     value: NT
 
+@dataclass(frozen=True)
+class ConstantOrigin(Generic[G]):
+    value: G
 
-Argument = TerminalArgument[T] | NonTerminalArgument[NT]
-
+Origin = NonTerminalOrigin | ConstantOrigin
 
 @dataclass(frozen=True)
-class RHSRule(Generic[NT, T]):
-    arguments: tuple[Argument, ...]
+class Argument(Generic[NT, T, G]):
+    name: str | None
+    origin: Origin
+    value: Tree[T] | None = None
+
+@dataclass(frozen=True)
+class RHSRule(Generic[NT, T, G]):
+    arguments: tuple[Argument[NT, T, G], ...]
     predicates: tuple[Callable[[dict[str, Any]], bool], ...]
     terminal: T
 
     @property
     def non_terminals(self) -> frozenset[NT]:
         """Set of non-terminals occurring in the body of the rule."""
-        return frozenset(arg.value for arg in self.arguments if isinstance(arg, NonTerminalArgument))
-
-    @property
-    def argument_names(self) -> tuple[str | None, ...]:
-        """Names of named arguments."""
-        return tuple(a.name for a in self.arguments)
+        return frozenset(arg.origin.value for arg in self.arguments if isinstance(arg.origin, NonTerminalOrigin))
 
     @property
     def literal_substitution(self):
-        return {n.name: n.value for n in self.arguments if isinstance(n, TerminalArgument)}
+        return {n.name: n.value.root for n in self.arguments if isinstance(n.origin, ConstantOrigin) and n.name is not None}
 
 
-class SolutionSpace(Generic[NT, T]):
-    _rules: defaultdict[NT, deque[RHSRule[NT, T]]]
+class SolutionSpace(Generic[NT, T, G]):
+    _rules: defaultdict[NT, deque[RHSRule[NT, T, G]]]
 
-    def __init__(self, rules: dict[NT, deque[RHSRule[NT, T]]] | None = None) -> None:
+    def __init__(self, rules: dict[NT, deque[RHSRule[NT, T, G]]] | None = None) -> None:
         if rules is None:
             rules = defaultdict(deque)
         self._rules = defaultdict(deque, rules)
 
-    def get(self, nonterminal: NT) -> deque[RHSRule[NT, T]] | None:
+    def get(self, nonterminal: NT) -> deque[RHSRule[NT, T, G]] | None:
         return self._rules.get(nonterminal)
 
-    def update(self, param: dict[NT, deque[RHSRule[NT, T]]]) -> None:
-        self._rules.update(param)
-
-    def __getitem__(self, nonterminal: NT) -> deque[RHSRule[NT, T]]:
+    def __getitem__(self, nonterminal: NT) -> deque[RHSRule[NT, T, G]]:
         return self._rules[nonterminal]
 
     def nonterminals(self) -> Iterable[NT]:
         return self._rules.keys()
 
-    def as_tuples(self) -> Iterable[tuple[NT, deque[RHSRule[NT, T]]]]:
+    def as_tuples(self) -> Iterable[tuple[NT, deque[RHSRule[NT, T, G]]]]:
         return self._rules.items()
-
-    def __setitem__(self, nonterminal: NT, rhs: deque[RHSRule[NT, T]]) -> None:
-        self._rules[nonterminal] = rhs
 
     def add_rule(
         self,
@@ -89,7 +82,7 @@ class SolutionSpace(Generic[NT, T]):
             f"{nt!s} ~> {' | '.join([str(subrule) for subrule in rule])}" for nt, rule in self._rules.items()
         )
 
-    def prune(self) -> SolutionSpace[NT, T]:
+    def prune(self) -> SolutionSpace[NT, T, G]:
         """Keep only productive rules."""
 
         ground_types: set[NT] = set()
@@ -112,7 +105,7 @@ class SolutionSpace(Generic[NT, T]):
                     if m not in ground_types and all(t in ground_types for t in non_terminals):
                         queue.add(m)
 
-        return SolutionSpace[NT, T](
+        return SolutionSpace[NT, T, G](
             defaultdict(
                 deque,
                 {
@@ -147,7 +140,7 @@ class SolutionSpace(Generic[NT, T]):
 
     def _generate_new_trees(
         self,
-        rule: RHSRule[NT, T],
+        rule: RHSRule[NT, T, G],
         existing_terms: Mapping[NT, set[Tree[T]]],
         max_count: int | None = None,
         nt_old_term: tuple[NT, Tree[T]] | None = None,
@@ -160,12 +153,12 @@ class SolutionSpace(Generic[NT, T]):
             return output_set
 
         named_non_terminals = [
-            a.value if isinstance(a, NonTerminalArgument) and a.name is not None else None for a in rule.arguments
+            a.origin.value if isinstance(a.origin, NonTerminalOrigin) and a.name is not None else None for a in rule.arguments
         ]
         unnamed_non_terminals = [
-            a.value if isinstance(a, NonTerminalArgument) and a.name is None else None for a in rule.arguments
+            a.origin.value if isinstance(a, NonTerminalOrigin) and a.name is None else None for a in rule.arguments
         ]
-        literal_arguments = [Tree(a.value) if isinstance(a, TerminalArgument) else None for a in rule.arguments]
+        literal_arguments = [a.value if isinstance(a.origin, ConstantOrigin) else None for a in rule.arguments]
 
         def interleave(
             parameters: Sequence[Tree[T] | None],
@@ -185,7 +178,7 @@ class SolutionSpace(Generic[NT, T]):
                     raise ValueError(msg)
 
         def construct_tree(
-            rule: RHSRule[NT, T],
+            rule: RHSRule[NT, T, G],
             parameters: Sequence[Tree[T] | None],
             literal_arguments: Sequence[Tree[T] | None],
             arguments: Sequence[Tree[T] | None],
@@ -199,8 +192,8 @@ class SolutionSpace(Generic[NT, T]):
         def specific_substitution(parameters):
             return {
                 a.name: p
-                for p, a in zip(parameters, rule.arguments, strict=False)
-                if isinstance(a, NonTerminalArgument) and a.name is not None
+                for p, a in zip(parameters, rule.arguments, strict=True)
+                if isinstance(a.origin, NonTerminalOrigin) and a.name is not None
             } | rule.literal_substitution
 
         def valid_parameters(nt_term: tuple[NT, Tree[T]] | None) -> Iterable[tuple[Tree[T] | None, ...]]:
@@ -240,7 +233,7 @@ class SolutionSpace(Generic[NT, T]):
 
         queues: dict[NT, PriorityQueue[Tree[T]]] = {n: PriorityQueue() for n in self.nonterminals()}
         existing_terms: dict[NT, set[Tree[T]]] = {n: set() for n in self.nonterminals()}
-        inverse_grammar: dict[NT, deque[tuple[NT, RHSRule[NT, T]]]] = {n: deque() for n in self.nonterminals()}
+        inverse_grammar: dict[NT, deque[tuple[NT, RHSRule[NT, T, G]]]] = {n: deque() for n in self.nonterminals()}
         all_results: set[Tree[T]] = set()
 
         for n, exprs in self._rules.items():
@@ -288,3 +281,66 @@ class SolutionSpace(Generic[NT, T]):
                                 queues[m].put(new_term)
             current_bucket_size += 1
         return
+
+    def contains_tree(self, start: NT, tree: Tree[T]) -> bool:
+        """Check if the solution space contains a given `tree` derivable from `start`."""
+        if start not in self.nonterminals():
+            return False
+
+        stack: deque[tuple | Callable] = deque([(start, tree)])
+        results: deque[bool] = deque()
+
+        def get_inputs(count: int) -> Generator[bool]:
+            for _ in range(count):
+                yield results.pop()
+            return
+
+        while stack:
+            task = stack.pop()
+            if isinstance(task, tuple):
+                nt, tree = task
+                relevant_rhss = [
+                    rhs for rhs in self._rules[nt]
+                    if len(rhs.arguments) == len(tree.children)
+                    and rhs.terminal == tree.root
+                    and all(
+                        argument.value == child for argument, child in zip(rhs.arguments, tree.children, strict=True) if isinstance(argument.origin, ConstantOrigin)
+                    )
+                ]
+
+                # if there is a relevant rule containing only TerminalArgument which are equal to the children of the tree
+                if any(
+                    all(isinstance(argument.origin, ConstantOrigin) for argument in rhs.arguments) for rhs in relevant_rhss
+                ):
+                    results.append(True)
+                    continue
+
+                # disjunction of the results for individual rules
+                def or_inputs(count: int = len(relevant_rhss)) -> None:
+                    results.append(any(get_inputs(count)))
+
+                stack.append(or_inputs)
+
+                for rhs in relevant_rhss:
+
+                    substitution = {argument.name: child.root
+                                    if isinstance(argument.origin, ConstantOrigin)
+                                    else child
+                                    for argument, child in zip(rhs.arguments, tree.children, strict=True)
+                                    if argument.name is not None
+                                    }
+                    # conjunction of the results for individual arguments in the rule
+                    def and_inputs(
+                            count: int = sum(1 for argument in rhs.arguments if isinstance(argument.origin, NonTerminalOrigin)),
+                            substitution: dict[str, Any] = substitution,
+                            predicates = rhs.predicates,
+                            ) -> None:
+                        results.append(all(get_inputs(count)) and all(predicate(substitution) for predicate in predicates))
+                    stack.append(and_inputs)
+                    for argument, child in zip(rhs.arguments, tree.children, strict=True):
+                        if isinstance(argument.origin, NonTerminalOrigin):
+                            stack.append((argument.origin.value, child))
+            elif isinstance(task, FunctionType):
+            # task is a function to execute
+                task()
+        return results.pop()

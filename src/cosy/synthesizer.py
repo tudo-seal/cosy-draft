@@ -25,8 +25,9 @@ from typing import (
 )
 
 from cosy.combinatorics import maximal_elements, minimal_covers
-from cosy.solution_space import NonTerminalArgument, RHSRule, SolutionSpace, TerminalArgument
+from cosy.solution_space import Argument, ConstantOrigin, NonTerminalOrigin, RHSRule, SolutionSpace
 from cosy.subtypes import Subtypes, Taxonomy
+from cosy.tree import Tree
 from cosy.types import (
     Abstraction,
     Arrow,
@@ -181,10 +182,6 @@ class Synthesizer(Generic[C]):
                             continue
                         stack.appendleft((substitution, index + 1, None))
                     elif parameter.values is not None:
-                        # TODO: currently unfair
-                        # for value in parameter.values(substitution):
-                        #    if value in self.literals[parameter.group]:
-                        #        stack.appendleft(({**substitution, parameter.name: value}, start_index + 1))
                         stack.appendleft((substitution, index, iter(parameter.values(substitution))))
                     else:
                         concrete_values = self.literals[parameter.group]
@@ -192,8 +189,6 @@ class Synthesizer(Generic[C]):
                             msg = f"The value of {parameter.name} could not be inferred."
                             raise RuntimeError(msg)
                         else:
-                            # for value in concrete_values:
-                            #    stack.appendleft(({**substitution, parameter.name: value}, start_index + 1))
                             stack.appendleft((substitution, index, iter(concrete_values)))
                 else:
                     try:
@@ -326,14 +321,14 @@ class Synthesizer(Generic[C]):
                         # Keep necessary substitutions and enumerate the rest
                         selected_instantiations = self._enumerate_substitutions(
                             combinator_info.prefix, substitution
-                        )  # TODO: generator
+                        )
                         stack.appendleft((current_target, (combinator, combinator_info, iter(selected_instantiations))))
                 else:
                     combinator, combinator_info, selected_instantiations = current_target_info
                     instantiation = next(selected_instantiations, None)
                     if instantiation is not None:
                         stack.appendleft((current_target, current_target_info))
-                        named_arguments = None
+                        named_arguments: tuple[Argument, ...] | None = None
 
                         # and every arity of the combinator type
                         for nary_types in combinator_info.type:
@@ -342,38 +337,38 @@ class Synthesizer(Generic[C]):
                             ):
                                 if named_arguments is None:  # do this only once for each instantiation
                                     named_arguments = tuple(
-                                        TerminalArgument(param.name, instantiation[param.name])
+                                        Argument(param.name, ConstantOrigin(combinator_info.groups[param.name]), Tree(instantiation[param.name]))
                                         if isinstance(param, LiteralParameter)
-                                        else NonTerminalArgument[Type](
-                                            param.name, param.group.subst(combinator_info.groups, instantiation)
+                                        else Argument(
+                                            param.name, NonTerminalOrigin(param.group.subst(combinator_info.groups, instantiation))
                                         )
                                         for param in combinator_info.prefix
                                         if isinstance(param, Parameter)
                                     )
                                     stack.extendleft(
-                                        (argument.value, None)
+                                        (argument.origin.value, None)
                                         for argument in named_arguments
-                                        if isinstance(argument, NonTerminalArgument)
+                                        if isinstance(argument.origin, NonTerminalOrigin)
                                     )
 
-                                anonymous_arguments = tuple(
-                                    NonTerminalArgument(None, ty.subst(combinator_info.groups, instantiation))
+                                anonymous_arguments: tuple[Argument, ...] = tuple(
+                                    Argument(None, NonTerminalOrigin(ty.subst(combinator_info.groups, instantiation)))
                                     for ty in subquery
                                 )
                                 yield (
                                     current_target,
-                                    RHSRule[Type, Any](
-                                        named_arguments + anonymous_arguments,
+                                    RHSRule[Type, Any, Any](
+                                        (*named_arguments, *anonymous_arguments),
                                         combinator_info.term_predicates,
                                         combinator,
                                     ),
                                 )
-                                stack.extendleft((q.value, None) for q in anonymous_arguments)
+                                stack.extendleft((q.origin.value, None) for q in anonymous_arguments)
 
-    def construct_solution_space(self, *targets: Type) -> SolutionSpace[Type, C]:
+    def construct_solution_space(self, *targets: Type) -> SolutionSpace[Type, C, Any]:
         """Constructs a logic program in the current environment for the given target types."""
 
-        solution_space: SolutionSpace[Type, C] = SolutionSpace()
+        solution_space: SolutionSpace[Type, C, Any] = SolutionSpace()
         for nt, rule in self.construct_solution_space_rules(*targets):
             solution_space.add_rule(nt, rule.terminal, rule.arguments, rule.predicates)
 

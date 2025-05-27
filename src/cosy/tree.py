@@ -5,13 +5,11 @@ import contextlib
 
 # Here, the indexed type [1, Section 4] is the tree grammar, where indices are non-terminals.
 # Uniqueness is guaranteed by python's set (instead of list) data structure.
-import typing
 from collections import deque
 from collections.abc import Callable, Hashable, Sequence
-from dataclasses import dataclass, field
 from functools import partial
 from inspect import Parameter, _empty, _ParameterKind, signature
-from typing import Any, Generic, TypeVar, overload
+from typing import Any, Generic, TypeVar
 
 T = TypeVar("T", bound=Hashable)
 
@@ -32,7 +30,7 @@ class Tree(Generic[T]):
 
     def __lt__(self, other: "Tree[T]") -> bool:
         return self.size < other.size
-    
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Tree):
             return False
@@ -40,12 +38,9 @@ class Tree(Generic[T]):
 
     def __rec_to_str__(self, *, outermost: bool) -> str:
         str_root = [f"{self.root!s}"]
-        str_params = [
-            f"{{{name}={subtree.__rec_to_str__(outermost=True)}}}" for name, subtree in self.parameters.items()
-        ]
-        str_args = [f"{subtree.__rec_to_str__(outermost=False)}" for subtree in self.arguments]
+        str_args = [f"{subtree.__rec_to_str__(outermost=False)}" for subtree in self.children]
 
-        strings = str_root + str_params + str_args
+        strings = str_root + str_args
         if not outermost and len(strings) > 1:
             return f"({' '.join(strings)})"
         return " ".join(strings)
