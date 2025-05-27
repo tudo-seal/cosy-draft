@@ -15,47 +15,28 @@ from typing import Any, Generic, TypeVar, overload
 
 T = TypeVar("T", bound=Hashable)
 
-
-@dataclass(slots=True)
 class Tree(Generic[T]):
     root: T
-    children: tuple["Tree[T]", ...] = field(default=())
-    # has exactly the same length as children and contains the names of the children
-    child_names: tuple[str | None, ...] = field(default=())
+    children: tuple["Tree[T]", ...]
+    size: int
+    _hash: int
 
-    size: int = field(init=False, compare=True, repr=False)
-    _hash: int = field(init=False, compare=False, repr=False)
-
-    def __post_init__(self) -> None:
+    def __init__(self, root: T, children: Sequence["Tree[T]"] = ()) -> None:
+        self.root = root
+        self.children = tuple(children)
         self.size = 1 + sum(child.size for child in self.children)
         self._hash = hash((self.root, self.children))
-
-    @property
-    def parameters(self) -> dict[str, "Tree[T]"]:
-        return {name: self.children[i] for i, name in enumerate(self.child_names) if name is not None}
-
-    @property
-    def arguments(self) -> tuple["Tree[T]", ...]:
-        return tuple(self.children[i] for i, name in enumerate(self.child_names) if name is None)
-
-    @overload
-    def __getitem__(self, i: typing.Literal[0]) -> T: ...
-    @overload
-    def __getitem__(self, i: typing.Literal[1]) -> tuple["Tree[T]", ...]: ...
-
-    def __getitem__(self, i: typing.Literal[0, 1]) -> T | tuple["Tree[T]", ...]:
-        match i:
-            case 0:
-                return self.root
-            case 1:
-                return self.children
-        raise IndexError
 
     def __hash__(self) -> int:
         return self._hash
 
     def __lt__(self, other: "Tree[T]") -> bool:
         return self.size < other.size
+    
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Tree):
+            return False
+        return self.size == other.size and self.root == other.root and self.children == other.children
 
     def __rec_to_str__(self, *, outermost: bool) -> str:
         str_root = [f"{self.root!s}"]

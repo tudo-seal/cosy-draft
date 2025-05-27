@@ -49,9 +49,13 @@ class RHSRule(Generic[NT, T]):
         return {n.name: n.value for n in self.arguments if isinstance(n, TerminalArgument)}
 
 
-@dataclass
 class SolutionSpace(Generic[NT, T]):
-    _rules: defaultdict[NT, deque[RHSRule[NT, T]]] = field(default_factory=lambda: defaultdict(deque))
+    _rules: defaultdict[NT, deque[RHSRule[NT, T]]]
+
+    def __init__(self, rules: dict[NT, deque[RHSRule[NT, T]]] | None = None) -> None:
+        if rules is None:
+            rules = defaultdict(deque)
+        self._rules = defaultdict(deque, rules)
 
     def get(self, nonterminal: NT) -> deque[RHSRule[NT, T]] | None:
         return self._rules.get(nonterminal)
@@ -190,7 +194,6 @@ class SolutionSpace(Generic[NT, T]):
             return Tree(
                 rule.terminal,
                 tuple(interleave(parameters, literal_arguments, arguments)),
-                child_names=rule.argument_names,
             )
 
         def specific_substitution(parameters):
