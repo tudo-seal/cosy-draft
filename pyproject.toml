@@ -55,6 +55,7 @@ extra-dependencies = [
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.13", "3.12", "3.11", "3.10"]
 
+
 [tool.coverage.run]
 source_pkgs = ["cosy", "tests"]
 branch = true
@@ -77,7 +78,15 @@ exclude_lines = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"tests/**/*.py" = [
-    "FBT", # bools as args
+"**/tests/**/*" = [
+  "FBT",
+]
+"**/benchmarks/**/*" = [
+  "PLC1901",
+  "PLR2004",
+  "PLR6301",
+  "S",
+  "TID252",
+  "FBT",
 ]
 

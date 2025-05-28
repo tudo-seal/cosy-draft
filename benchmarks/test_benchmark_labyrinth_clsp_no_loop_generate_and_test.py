@@ -88,9 +88,7 @@ def fin():
 
 
 def test_benchmark_labyrinth_clsp_no_loop_generate_and_test(component_specifications, literals, fin, benchmark):
-    synthesizer = Synthesizer(
-        component_specifications, parameter_space=literals
-    )
+    synthesizer = Synthesizer(component_specifications, parameter_space=literals)
 
     def synthesize_and_enumerate():
         grammar = synthesizer.construct_solution_space(fin)

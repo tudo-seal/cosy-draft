@@ -78,7 +78,10 @@ def test_multi_values2() -> None:
     synthesizer = Synthesizer(component_specifications, parameter_space)
     target = Constructor("c", Literal(1, "int"))
     solution_space = synthesizer.construct_solution_space(target)
-    assert {tree.interpret() for tree in solution_space.enumerate_trees(target)} == {"C 1 2", "C 1 0"}
+    assert {tree.interpret() for tree in solution_space.enumerate_trees(target)} == {
+        "C 1 2",
+        "C 1 0",
+    }
 
 
 def test_infinite_values() -> None:

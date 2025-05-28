@@ -21,7 +21,12 @@ def visited(path: Tree[Any]) -> set[tuple[int, int]]:
 
 
 def powerset(s: list[tuple[int, int]]) -> list[frozenset[tuple[int, int]]]:
-    return list(map(frozenset, chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))))
+    return list(
+        map(
+            frozenset,
+            chain.from_iterable(combinations(s, r) for r in range(len(s) + 1)),
+        )
+    )
 
 
 def is_free(size: int, pos: tuple[int, int]) -> bool:
