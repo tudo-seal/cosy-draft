@@ -1,9 +1,10 @@
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 from itertools import product
 
 import pytest
 from cosy.dsl import DSL
 from cosy.synthesizer import Specification, Synthesizer
+from cosy.tree import Tree
 from cosy.types import Constructor, Literal, Type, Var
 
 
@@ -37,26 +38,42 @@ def component_specifications() -> (
     def pos(ab: str) -> Type:
         return Constructor("pos", Var(ab))
 
+    def getpath(path: Tree) -> Iterable[tuple[int, int]]:
+        while path.root != "START":
+            position = path.children[0].root
+            path = path.children[2]
+            if isinstance(position, tuple) and isinstance(path, Tree):
+                yield position
+            else:
+                msg = "Expected position to be a tuple and path to be a tree."
+                raise TypeError(msg)
+        yield (0, 0)
+        return
+
     return {
         up: DSL()
         .parameter("b", "int2")
         .parameter("a", "int2", lambda vs: [(vs["b"][0], vs["b"][1] + 1)])
         .argument("pos", pos("a"))
+        .constraint(lambda vs: vs["b"] not in getpath(vs["pos"]))
         .suffix(pos("b")),
         down: DSL()
         .parameter("b", "int2")
         .parameter("a", "int2", lambda vs: [(vs["b"][0], vs["b"][1] - 1)])
         .argument("pos", pos("a"))
+        .constraint(lambda vs: vs["b"] not in getpath(vs["pos"]))
         .suffix(pos("b")),
         left: DSL()
         .parameter("b", "int2")
         .parameter("a", "int2", lambda vs: [(vs["b"][0] + 1, vs["b"][1])])
         .argument("pos", pos("a"))
+        .constraint(lambda vs: vs["b"] not in getpath(vs["pos"]))
         .suffix(pos("b")),
         right: DSL()
         .parameter("b", "int2")
         .parameter("a", "int2", lambda vs: [(vs["b"][0] - 1, vs["b"][1])])
         .argument("pos", pos("a"))
+        .constraint(lambda vs: vs["b"] not in getpath(vs["pos"]))
         .suffix(pos("b")),
         "START": "pos" @ (Literal((0, 0), "int2")),
     }
