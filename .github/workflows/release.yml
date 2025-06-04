@@ -39,5 +39,9 @@ jobs:
     - name: Display Version
       run: hatch version
 
-    - name: Publish
-      run: hatch publish
+    - name: Build Package
+      run: hatch build
+
+    # Uses OpenID Connect
+    - name: Publish Package
+      uses: pypa/gh-action-pypi-publish@release/v1
