@@ -1,6 +1,7 @@
 name: Perform Checks
 
 on:
+  workflow_call:
   push:
     branches:
       - main
