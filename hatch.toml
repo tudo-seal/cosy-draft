@@ -1,0 +1,39 @@
+[envs.docs]
+dependencies = [
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocs-minify-plugin",
+  "mkdocstrings-python",
+  "mkdocs-gen-files",
+  "mkdocs-literate-nav",
+  "mkdocs-git-revision-date-localized-plugin",
+  "linkchecker",
+  "pygments",
+]
+
+[envs.docs.env-vars]
+MKDOCS_CONFIG = "mkdocs.yml"
+
+[envs.docs.scripts]
+build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean --strict {args}"
+validate = "linkchecker site"
+check = [
+  "build --no-directory-urls",
+  "validate",
+]
+serve = "mkdocs serve --config-file {env:MKDOCS_CONFIG} --dev-addr localhost:8000 {args}"
+deploy = "mkdocs gh-deploy --force --config-file {env:MKDOCS_CONFIG} --clean {args}"
+
+[envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+  "pytest>=8.0.0"
+]
+
+[envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/cosy tests}"
+
+[envs.hatch-test]
+extra-dependencies = [
+  "pytest-benchmark"
+]

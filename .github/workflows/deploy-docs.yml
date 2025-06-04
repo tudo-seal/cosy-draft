@@ -1,0 +1,41 @@
+name: Deploy Documentation
+
+on:
+  push:
+    tags:
+    - v*
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-docs
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Full history for timestamps
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install Hatch
+      uses: pypa/hatch@install
+
+    - name: Display Version
+      run: hatch version
+
+    - name: Configure Git for Actions
+      run: |
+        git config --local user.name 'github-actions[bot]'
+        git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Build and Check
+      run: hatch run docs:check
+
+    - name: Publish
+      run: hatch run docs:deploy
