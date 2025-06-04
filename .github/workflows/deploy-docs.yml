@@ -14,7 +14,11 @@ concurrency:
   group: deploy-docs
 
 jobs:
+  checks:
+    uses: ./.github/workflows/check-docs.yml
+
   run:
+    needs: [checks]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -38,9 +42,6 @@ jobs:
       run: |
         git config --local user.name 'github-actions[bot]'
         git config --local user.email 'github-actions[bot]@users.noreply.github.com'
-
-    - name: Build and Check
-      run: hatch run docs:check
 
     - name: Publish
       run: hatch run docs:deploy
