@@ -10,7 +10,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: deploy-docs
+  group: release
+  cancel-in-progress: true
 
 jobs:
   checks:

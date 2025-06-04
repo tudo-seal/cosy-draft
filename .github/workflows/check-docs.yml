@@ -9,6 +9,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: check-docs-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   run:
     runs-on: ubuntu-latest

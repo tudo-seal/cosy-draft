@@ -12,6 +12,7 @@ permissions:
 
 concurrency:
   group: deploy-docs
+  cancel-in-progress: true
 
 jobs:
   checks:

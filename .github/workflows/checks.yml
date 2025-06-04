@@ -10,7 +10,7 @@ on:
       - main
 
 concurrency:
-  group: test-${{ github.head_ref }}
+  group: check-${{ github.head_ref }}
   cancel-in-progress: true
 
 env:
