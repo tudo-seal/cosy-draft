@@ -15,11 +15,9 @@ concurrency:
 
 jobs:
   checks:
-    if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/checks.yml
 
   release:
-    if: github.ref == 'refs/heads/main'
     needs: [checks]
     environment: release
     runs-on: ubuntu-latest
