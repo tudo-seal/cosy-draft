@@ -24,7 +24,7 @@
 ## Installation
 
 ```console
-pip install cosy
+pip install combinatory-synthesizer
 ```
 
 ## License

@@ -1,21 +1,19 @@
 # CoSy
 
-[![PyPI - Version](https://img.shields.io/pypi/v/combinatory-synthesizer.svg)](https://pypi.org/project/combinatory-synthesizer)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/combinatory-synthesizer.svg)](https://pypi.org/project/combinatory-synthesizer)
-
 -----
 
-## Table of Contents
+## About
+This is just a suggestion text. 
 
-- [Installation](#installation)
-- [License](#license)
+**CoSy** is short for **Co**mbinatory **Sy**nthesizer. 
+It is an easy to use, comfortable, even cosy, framework that allows synthesizing target artifacts from modular compontents. 
+Due to the domain-agnostic nature of the framework (while implemented in python, arbitrary artifacts can be created), 
+it is by-and-large applicable to any use-case that benefits or inherently makes use of modularization. 
 
-## Installation
+## Papers
+There is a large body of work concerning combinatory logic synthesis, utilizing CoSy (formerly known as the CLS-framework). 
+It has been utilized for robotics, logistics, CAD assemblies, factory planning, and many more. 
+An overview over relevant literature, split into applications of CoSy and the theory behind it, is found in the following.
+### Applications
 
-```console
-pip install cosy
-```
-
-## License
-
-`cosy` is distributed under the terms of the [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) license.
+### Theory
