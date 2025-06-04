@@ -6,8 +6,12 @@ on:
     - v*
   workflow_dispatch:
 
+permissions:
+  pages: write
+
 concurrency:
   group: deploy-docs
+
 jobs:
   run:
     runs-on: ubuntu-latest
