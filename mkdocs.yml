@@ -5,7 +5,7 @@ site_url: https://tudo-seal.github.io/cosy
 repo_name: tudo-seal/cosy
 repo_url: https://github.com/tudo-seal/cosy
 edit_uri: blob/main/docs
-copyright: 'Copyright &copy; Constantin Chaumet, Andrej Dudenhefner, Felix Laarmann, Christoph Stahl: 2025-present'
+copyright: 'Copyright &copy; <a href="https://github.com/Jekannadar">Constantin Chaumet</a>, <a href="https://github.com/mrhaandi">Andrej Dudenhefner</a>, <a href="https://github.com/FelixLaarmann">Felix Laarmann</a>, <a href="https://github.com/christofsteel">Christoph Stahl</a>: 2025-present'
 
 docs_dir: docs
 site_dir: site
@@ -51,7 +51,15 @@ theme:
 nav:
   - Home:
     - About: index.md
-    - Getting Started: getting-started.md
+    - Getting Started: quick-start.md
+  - Examples:
+      - Introduction: examples/introduction.md
+  - Guidelines:
+      - Best Practice: guidelines/best-practice.md
+      - Common Errors: guidelines/troubleshoot.md
+  - Features:
+      - Predicates: features/predicates.md
+      - Advanced Users: features/advanced.md
   - Code Reference: reference/
   - About:
     - Authors: about/authors.md
@@ -83,6 +91,16 @@ plugins:
   git-revision-date-localized:
     type: date
     strict: false
+
+markdown_extensions:
+  - attr_list:
+  - tables:
+  - md_in_html:
+  - toc:
+        permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra:
   social:
