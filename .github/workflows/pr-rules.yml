@@ -13,9 +13,18 @@ jobs:
       checks: write
       pull-requests: write
     steps:
-      - name: check-pr-rules
+      - name: Close Pull Request and Comment if Violating
         uses: superbrothers/close-pull-request@v3
         if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
         with:
           comment: You can only merge to main from a release or a hotfix branch.
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fail Job if Violating
+        if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
+        run: |
+          echo "You can only merge to main from a release or a hotfix branch."
+          exit 1
+
+  check-pr:
+    needs: pr-rules
+    uses: ./.github/workflows/checks.yml
