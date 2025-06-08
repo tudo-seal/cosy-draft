@@ -38,14 +38,3 @@ extra-dependencies = [
   "pytest-benchmark",
   "pytest-cov"
 ]
-
-# Only for running coverage command
-[envs.coverage]
-detached = true
-dependencies = [
-  "coverage>=7.0.0",
-]
-
-[envs.coverage.scripts]
-combine = "coverage combine {args}"
-xml = "coverage xml"
