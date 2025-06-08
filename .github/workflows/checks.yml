@@ -41,4 +41,55 @@ jobs:
       run: hatch run types:check
 
     - name: Run tests
-      run: hatch test --python ${{ matrix.python-version }} --cover --randomize --parallel --retries 2 --retry-delay 1
+      run: hatch test tests --python ${{ matrix.python-version }} --cover --randomize --parallel --junit-xml=report.xml
+
+    - name: Make Coverage Files OS and Version specific
+      run: mv .coverage ".coverage.${{ matrix.os }}.${{ matrix.python-version }}"
+
+    - name: Upload Coverage
+      uses: actions/upload-artifact@v4
+      with:
+        include-hidden-files: true
+        name: coverage-${{ matrix.os }}-${{ matrix.python-version }}
+        path: .coverage*
+
+  coverage:
+    name: Process Coverage and Upload to CodeCov
+    permissions:
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    needs:
+      - run
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Hatch
+        uses: pypa/hatch@install
+
+      - name: Make Version Files Etc.
+        run: hatch build --hooks-only
+
+      - name: Download Coverage Data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Combine Matrix Data
+        run: hatch run coverage:combine
+
+      - name: Generate XML for CodeCov
+        run: hatch run coverage:xml
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload Tests to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+

@@ -491,6 +491,7 @@ $RECYCLE.BIN/
 
 # Root files
 /.coverage*
+report.xml
 
 # Auto-generated during builds
 /src/cosy/_version.py
