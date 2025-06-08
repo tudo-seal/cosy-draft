@@ -14,11 +14,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  pre-release-checks:
     uses: ./.github/workflows/checks.yml
 
-  release:
-    needs: [checks]
+  release-pypi:
+    needs: [pre-release-checks]
     environment: release
     runs-on: ubuntu-latest
     steps:

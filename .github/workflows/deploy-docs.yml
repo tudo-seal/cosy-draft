@@ -15,11 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  pre-deploy-docs-checks:
     uses: ./.github/workflows/check-docs.yml
 
-  run:
-    needs: [checks]
+  deploy-docs:
+    needs: [pre-deploy-docs-checks]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

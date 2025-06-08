@@ -1,0 +1,16 @@
+name: 'Check PR Rules'
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pr-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch
+        if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
+        run: |
+          echo "ERROR: You can only merge to main from a release or a hotfix branch."
+          exit 1
