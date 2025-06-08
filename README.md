@@ -31,3 +31,7 @@ pip install combinatory-synthesizer
 ## License
 
 `cosy` is distributed under the terms of the [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) license.
+
+## Contributing
+
+
