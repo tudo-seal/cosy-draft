@@ -9,9 +9,13 @@ on:
 jobs:
   pr-rules:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
     steps:
       - name: check-pr-rules
         uses: superbrothers/close-pull-request@v3
         if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
         with:
           comment: You can only merge to main from a release or a hotfix branch.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
