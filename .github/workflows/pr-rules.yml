@@ -1,0 +1,17 @@
+name: 'Check PR Rules'
+
+on:
+  pull_request_target:
+    types: [ opened ]
+    branches:
+      - main
+
+jobs:
+  pr-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check-pr-rules
+        uses: superbrothers/close-pull-request@v3
+        if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
+        with:
+          comment: You can only merge to main from a release or a hotfix branch.
