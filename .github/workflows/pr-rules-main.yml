@@ -1,10 +1,14 @@
-name: 'Check PR Rules'
+name: 'Check PR Rules for Main'
 
 on:
   pull_request_target:
     types: [ opened ]
     branches:
       - main
+
+concurrency:
+  group: ${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pr-rules:
@@ -24,11 +28,3 @@ jobs:
         run: |
           echo "You can only merge to main from a release or a hotfix branch."
           exit 1
-
-  check-pr:
-    needs: pr-rules
-    uses: ./.github/workflows/checks.yml
-
-  check-docs:
-    needs: pr-rules
-    uses: ./.github/workflows/check-docs.yml
