@@ -28,3 +28,7 @@ jobs:
   check-pr:
     needs: pr-rules
     uses: ./.github/workflows/checks.yml
+
+  check-docs:
+    needs: pr-rules
+    uses: ./.github/workflows/check-docs.yml
