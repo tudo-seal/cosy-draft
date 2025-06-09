@@ -1,4 +1,4 @@
-name: 'Check PR Rules'
+name: 'Check PR Rules for Main'
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  pr-rules:
+  pr-rules-main:
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -17,18 +17,19 @@ jobs:
         uses: superbrothers/close-pull-request@v3
         if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
         with:
-          comment: You can only merge to main from a release or a hotfix branch.
+          comment: |
+            :warning: You can only merge to main from a release or a hotfix branch. :warning:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Fail Job if Violating
         if: ${{ !contains( github.head_ref, 'release/') && !contains( github.head_ref, 'hotfix/')}}
         run: |
-          echo "You can only merge to main from a release or a hotfix branch."
+          echo "Reason: You can only merge to main from a release or a hotfix branch."
           exit 1
 
   check-pr:
-    needs: pr-rules
+    needs: pr-rules-main
     uses: ./.github/workflows/checks.yml
 
   check-docs:
-    needs: pr-rules
+    needs: pr-rules-main
     uses: ./.github/workflows/check-docs.yml
