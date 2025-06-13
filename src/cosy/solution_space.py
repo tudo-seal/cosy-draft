@@ -241,10 +241,9 @@ class SolutionSpace(Generic[NT, T, G]):
 
         for n, exprs in self._rules.items():
             for expr in exprs:
-                if expr.non_terminals.issubset(self.nonterminals()):
+                if all(m in self.nonterminals() for m in expr.non_terminals):
                     for m in expr.non_terminals:
-                        if m in self.nonterminals():
-                            inverse_grammar[m].append((n, expr))
+                        inverse_grammar[m].append((n, expr))
                     for new_term in self._generate_new_trees(expr, existing_terms):
                         queues[n].put(new_term)
                         if n == start and new_term not in all_results:
