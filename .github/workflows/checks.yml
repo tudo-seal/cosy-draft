@@ -53,7 +53,7 @@ jobs:
       run: hatch test tests --python ${{ matrix.python-version }} --cov --cov-branch --cov-report=xml --randomize --parallel --junit-xml=report.xml
 
     - name: Upload Tests to Codecov
-      if: ${{ !cancelled() }}
+      if: ${{ !cancelled() && !contains( github.head_ref, 'hotfix/')}}
       uses: codecov/test-results-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -62,6 +62,7 @@ jobs:
 
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v5
+      if: ${{ !contains( github.head_ref, 'hotfix/') }}
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.xml

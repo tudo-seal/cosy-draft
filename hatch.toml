@@ -10,6 +10,7 @@ dependencies = [
   "linkchecker",
   "pygments",
 ]
+packages = ["examples"]
 
 [envs.docs.env-vars]
 MKDOCS_CONFIG = "mkdocs.yml"
