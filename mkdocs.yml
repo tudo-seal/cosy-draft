@@ -52,8 +52,7 @@ nav:
   - Home:
     - About: index.md
     - Getting Started: quick-start.md
-  - Examples:
-      - Introduction: examples/introduction.md
+  - Examples: examples/
   - Guidelines:
       - Best Practice: guidelines/best-practice.md
       - Common Errors: guidelines/troubleshoot.md
@@ -66,12 +65,14 @@ nav:
 
 watch:
 - src/cosy
+- examples
 
 plugins:
   search: {}
   gen-files:
     scripts:
-      - scripts/gen_ref_pages.py
+      - scripts/gen_reference_pages.py
+      - scripts/gen_example_pages.py
   literate-nav:
     nav_file: SUMMARY.md
   minify:
@@ -80,8 +81,7 @@ plugins:
     default_handler: python
     handlers:
       python:
-        paths:
-          - src
+        paths: [src, examples]
         options:
           show_root_heading: true
           show_root_full_path: false

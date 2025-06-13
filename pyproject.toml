@@ -72,6 +72,10 @@ exclude_lines = [
 "**/tests/**/*" = [
   "FBT",
 ]
+"**/examples/**/*" = [
+  "T201",
+  "INP001"
+]
 "**/benchmarks/**/*" = [
   "PLC1901",
   "PLR2004",
