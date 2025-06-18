@@ -2,8 +2,9 @@
 """
 Demonstrates constraints in CoSy.
 """
+
 import re
-from typing import Container
+from collections.abc import Container
 
 from cosy import CoSy
 from cosy.dsl import DSL
@@ -18,6 +19,7 @@ def empty() -> str:
     """
     return ""
 
+
 def zero(s: str) -> str:
     """
     Append the string "0" to the input string.
@@ -26,6 +28,7 @@ def zero(s: str) -> str:
     :return: The input string with "0" appended.
     """
     return s + "0"
+
 
 def one(s: str) -> str:
     """
@@ -36,30 +39,26 @@ def one(s: str) -> str:
     """
     return s + "1"
 
+
 def fin(_b: bool, s: str) -> str:
     return s
 
-def is_heavy(s: str, r: str) -> bool:
+
+def is_heavy(s: str) -> bool:
     """
     Check if the number of '1's in the string is greater than the number of '0's.
-    
+
     :param s: A string containing '0's and '1's.
     :return: True if the number of '1's is greater than the number of '0's, False otherwise.
     """
-    return s.count('0') < s.count('1')
+    return s.count("0") < s.count("1")
+
 
 def main():
     component_specifications = {
         empty: DSL().suffix(Constructor("str")),
-
-        zero: DSL()
-        .argument("s", Constructor("str"))
-        .suffix(Constructor("str")),
-
-        one: DSL()
-        .argument("s", Constructor("str"))
-        .suffix(Constructor("str")),
-
+        zero: DSL().argument("s", Constructor("str")).suffix(Constructor("str")),
+        one: DSL().argument("s", Constructor("str")).suffix(Constructor("str")),
         fin: DSL()
         .parameter("r", "regular_expression")
         .argument("s", Constructor("str"))
@@ -84,6 +83,7 @@ def main():
     # solve the query and print the solutions
     for solution in cosy.solve(query):
         print(solution)
+
 
 if __name__ == "__main__":
     main()

@@ -4,13 +4,13 @@
 
 ![CoSy logo](assets/images/logo.svg){ role="img" }
 
-|                                                                     |                             |
-|---------------------------------------------------------------------|-----------------------------|
-| [:material-timer-check: Quick Start](quick-start.md)                | Get started with synthesis. |
-| [:material-code-tags: Predicates](features/predicates.md)           | Concise Specification.      |
-| [:material-dna: Advanced](features/advanced.md)                     | For Power-Users.            |
-| [:material-school: Examples](examples/introduction.md)              | Most telling examples.      |
-| [:material-check-bold: Best Practice](guidelines/best-practice.md)  | Guidelines for efficiency.  |
+|                                                                    |                             |
+|--------------------------------------------------------------------|-----------------------------|
+| [:material-timer-check: Quick Start](quick-start.md)               | Get started with synthesis. |
+| [:material-code-tags: Constraints](features/constraints.md)        | Concise Specification.      |
+| [:material-dna: Advanced](features/advanced.md)                    | For Power-Users.            |
+| [:material-school: Examples](examples/introduction.md)             | Most telling examples.      |
+| [:material-check-bold: Best Practice](guidelines/best-practice.md) | Guidelines for efficiency.  |
 | [:material-alert-circle: Troubleshoot](guidelines/troubleshoot.md) | Most common errors.         |
 </div>
 
