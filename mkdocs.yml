@@ -39,6 +39,7 @@ theme:
         name: Switch to dark mode
   features:
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
     - content.tooltips
     - navigation.expand
@@ -57,7 +58,7 @@ nav:
       - Best Practice: guidelines/best-practice.md
       - Common Errors: guidelines/troubleshoot.md
   - Features:
-      - Predicates: features/predicates.md
+      - Constraints: features/constraints.md
       - Advanced Users: features/advanced.md
   - Code Reference: reference/
   - About:
@@ -101,6 +102,17 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      use_pygments: true
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      guess_lang: false
+      default_lang: cosy-py
+  - pymdownx.inlinehilite:
+      style_plain_text: cosy-py
+  - pymdownx.snippets:
+  - pymdownx.superfences:
 
 extra:
   social:

@@ -74,7 +74,8 @@ exclude_lines = [
 ]
 "**/examples/**/*" = [
   "T201",
-  "INP001"
+  "INP001",
+  "FBT",
 ]
 "**/benchmarks/**/*" = [
   "PLC1901",

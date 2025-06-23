@@ -9,8 +9,9 @@ dependencies = [
   "mkdocs-git-revision-date-localized-plugin",
   "linkchecker",
   "pygments",
+  "cosy_lexers @ git+https://github.com/tudo-seal/cosy-lexers"
 ]
-packages = ["examples"]
+packages = ["examples", "docs/lexers"]
 
 [envs.docs.env-vars]
 MKDOCS_CONFIG = "mkdocs.yml"
