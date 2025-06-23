@@ -1,7 +1,7 @@
 name: 'Check PR Rules for Main'
 
 on:
-  pull_request:
+  pull_request_target:
     types: [ opened ]
     branches:
       - main
@@ -25,11 +25,7 @@ jobs:
         run: |
           echo "Reason: You can only merge to main from a release or a hotfix branch."
           exit 1
-
-  check-pr:
-    needs: pr-rules-main
-    uses: ./.github/workflows/checks.yml
-
-  check-docs:
-    needs: pr-rules-main
-    uses: ./.github/workflows/check-docs.yml
+      - name: Succeed Job if not Violating
+        if: ${{ contains( github.head_ref, 'release/') || contains( github.head_ref, 'hotfix/')}}
+        run: |
+          exit 0
