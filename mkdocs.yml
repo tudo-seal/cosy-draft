@@ -58,7 +58,7 @@ nav:
       - Best Practice: guidelines/best-practice.md
       - Common Errors: guidelines/troubleshoot.md
   - Features:
-      - Predicates: features/constraints.md
+      - Constraints: features/constraints.md
       - Advanced Users: features/advanced.md
   - Code Reference: reference/
   - About:
