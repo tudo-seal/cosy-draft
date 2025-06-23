@@ -8,7 +8,7 @@ In the following example, we construct binary sequences that match a given regul
 
 First, we specify binary sequences, which are possibly empty sequences of `0`s and `1`s.
 
-```cosy-py
+```
 def empty() -> str:
     return ""
 
@@ -19,7 +19,7 @@ def one(s: str) -> str:
     return s + "1"
 ```
 with the following specifications: 
-```cosy-py
+```
 empty: DSL().suffix(Constructor("str")),
 
 zero: DSL()
@@ -36,12 +36,12 @@ The component `fin` does not change a given sequence `s`.
 However, in its specification, `s` matches the regular expression given by the parameter `r`.
 This exposes a computed property (corresponding regular expression) as a nominal specification (parameter `r`).
 
-```cosy-py
+```
 def fin(_b: bool, s: str) -> str:
     return s
 ```
 with specification: 
-```cosy-py hl_lines="4"
+``` hl_lines="4"
 fin: DSL()
     .parameter("r", "regular_expression")
     .argument("s", Constructor("str"))
@@ -56,7 +56,7 @@ Therefore, the value of the parameter `r` is `vs["r"]`.
 The interpreted value of the argument `s` is `vs["s"].interpret()`
 
 Using the above specifications, we can construct sequences that match the specified regular expressions:
-```cosy-py
+```
 class RegularExpression(Container): # (1)!
     def __contains__(self, value: object) -> bool:
         return isinstance(value, str)

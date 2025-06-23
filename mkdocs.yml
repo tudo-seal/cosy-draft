@@ -103,10 +103,14 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
+      use_pygments: true
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+      guess_lang: false
+      default_lang: cosy-py
   - pymdownx.inlinehilite:
+      style_plain_text: cosy-py
   - pymdownx.snippets:
   - pymdownx.superfences:
 

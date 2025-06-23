@@ -21,7 +21,7 @@ Using domain-specific language provided by the `DSL` class define a mapping of c
  
   Given the above parameters and arguments the component `fib_next` computes a Fibonacci number and is associated with index `z`, specified by `Constructor("fib") & Constructor("at", Var("z")))`.
 
-```cosy-py
+```
 def fib_zero() -> int:
     return 0
 
@@ -51,9 +51,9 @@ component_specifications = {
 ## 2. Define Parameter Space
 
 Define a mapping from parameter groups to parameter values.
-In the toy example, indices less than `20` are consideres.
+In the toy example, indices less than `20` are considered.
 
-```cosy-py
+```
 parameter_space = {
     "int": list(range(0, 20))
 }
@@ -63,7 +63,7 @@ parameter_space = {
 
 Create an instance of `CoSy` by providing component specifications and the parameter space.
 
-```cosy-py
+```
 cosy = CoSy(component_specifications, parameter_space)
 ```
 
@@ -76,13 +76,13 @@ Solutions are found by means of instantiation and composition of the given compo
 
 The following query `Constructor("fib")` describes arbitrary Fibonacci numbers at indices in the given parameter space.
 
-```cosy-py
+```
 query = Constructor("fib")
 ```
 
 Using the `solve` method, iterate over and display solutions for the given query.
 
-```cosy-py
+```
 for solution in cosy.solve(query):
     print(solution)
 ```
@@ -93,7 +93,7 @@ The specification allows us to query Fibonacci numbers at specific indices.
 For an index `i` the query `Constructor("fib") & Constructor("at", Literal(i, "int"))` describes the Fibonacci number at index `i`.
 Using the `solve` method, construct and display this Fibonacci number.
 
-```cosy-py
+```
 for i in range(20):
     query = Constructor("fib") & Constructor("at", Literal(i, "int"))
     print(i, next(iter(cosy.solve(query))))
