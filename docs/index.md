@@ -89,3 +89,125 @@ An overview over relevant literature, split into applications of CoSy and the th
 ### Applications
 
 ### Theory
+<div class="grid cards" style="grid-template-columns:repeat(1,minmax(min(100%,16rem),1fr))!important" markdown>
+
+-   :material-book:{ .lg .middle } __[Finite Combinatory Logic with Predicates](https://doi.org/10.4230/LIPIcs.TYPES.2023.2){:target="_blank"}__
+
+    ---
+
+    @theory-dudenhefner-2024
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Finite Combinatory Logic Extended by a Boolean Query Language for Composition Synthesis](https://types2023.webs.upv.es/TYPES2023.pdf){:target="_blank"}__
+
+    ---
+
+    @theory-dudenhefner-2023
+    
+ 
+
+-   :material-book:{ .lg .middle } __[A Type-Theoretic Framework for Software Component Synthesis](http://doi.org/10.17877/DE290R-20320){:target="_blank"}__
+
+    ---
+
+    @theory-bessai-2019
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Algorithmic Aspects of Type-Based Program Synthesis](https://doi.org/10.17877/de290r-20108){:target="_blank"}__
+
+    ---
+
+    @theory-dudenhefner-2019
+    
+ 
+
+-   :material-book:{ .lg .middle } __[CLS-SMT: Bringing Together Combinatory Logic Synthesis and Satisfiability Modulo Theories](https://doi.org/10.4204/EPTCS.301.7){:target="_blank"}__
+
+    ---
+
+    @theory-kallat-2019
+    
+ 
+
+-   :material-book:{ .lg .middle } __[User Support for the Combinator Logic Synthesizer Framework](https://doi.org/10.4204/EPTCS.284.2){:target="_blank"}__
+
+    ---
+
+    @theory-bessai-2018
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Combinatory Synthesis of Classes Using Feature Grammars](https://doi.org/10.1007/978-3-319-28934-2_7){:target="_blank"}__
+
+    ---
+
+    @theory-bessai-2016
+    
+ 
+
+-   :material-book:{ .lg .middle } __[A Long and Winding Road Towards Modular Synthesis](https://doi.org/10.1007/978-3-319-47166-2_21){:target="_blank"}__
+
+    ---
+
+    @theory-heineman-2016
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Mixin Composition Synthesis Based on Intersection Types](https://doi.org/10.4230/LIPIcs.TLCA.2015.76){:target="_blank"}__
+
+    ---
+
+    @theory-bessai-2015
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Towards Migrating Object-Oriented Frameworks to Enable Synthesis of Product Line Members](https://doi.org/10.1145/2791060.2791076){:target="_blank"}__
+
+    ---
+
+    @theory-heineman-2015
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Combinatory Logic Synthesizer](https://doi.org/10.1007/978-3-662-45234-9_3){:target="_blank"}__
+
+    ---
+
+    @theory-bessai-2014
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Staged Composition Synthesis](https://doi.org/10.1007/978-3-642-54833-8_5){:target="_blank"}__
+
+    ---
+
+    @theory-duedder-2014
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Towards Combinatory Logic Synthesis](#){:target="_blank"}__
+
+    ---
+
+    @theory-rehof-2013
+
+
+
+-   :material-book:{ .lg .middle } __[Bounded Combinatory Logic](https://doi.org/10.4230/LIPICS.CSL.2012.243){:target="_blank"}__
+
+    ---
+
+    @theory-duedder-2012
+    
+ 
+
+-   :material-book:{ .lg .middle } __[Finite Combinatory Logic with Intersection Types](https://doi.org/10.1007/978-3-642-21691-6_15){:target="_blank"}__
+
+    ---
+
+    @theory-rehof-2011
+    
+ 
+</div>
