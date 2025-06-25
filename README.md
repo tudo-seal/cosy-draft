@@ -16,20 +16,28 @@
 </div>
 
 -----
+`CoSy` enables synthesis of arbitrary artifacts from individual modular components. 
+It efficiently handles specification and constraints of these modular components, 
+describing how they connect and which performance criteria need to be satisfied.
 
-## Table of Contents
+- For a simple example for a theoretically minded computer scientist, see: [Fibonacci](https://tudo-seal.github.io/cosy-draft/quick-start/)
+- For a simple example for a practically minded engineer, see: [Robot Arm (WIP)](#)
 
-- [Installation](#installation)
-- [License](#license)
 
 ## Installation
+Installation is as simple as running: 
 
 ```console
 pip install combinatory-synthesizer
 ```
 
+`CoSy` itself has no dependencies at all, so it will play nice with any pre-existing projects.
+
+## Documentation
+This README is intentionally left brief.  
+Please head over to the [documentation](https://tudo-seal.github.io/cosy-draft/) to [get started](https://tudo-seal.github.io/cosy-draft/quick-start/). 
+
 ## License
 
-`cosy` is distributed under the terms of the [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) license.
+`CoSy` is distributed under the terms of the [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) license.
 
-## Contributing
