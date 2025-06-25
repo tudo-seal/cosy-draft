@@ -75,8 +75,6 @@
 -----
 
 ## About
-This is just a suggestion text. 
-
 **CoSy** is short for **Co**mbinatory **Sy**nthesizer. 
 It is an easy to use, comfortable, even cosy, framework that allows synthesizing target artifacts from modular compontents. 
 Due to the domain-agnostic nature of the framework (while implemented in python, arbitrary artifacts can be created), 
@@ -84,14 +82,72 @@ it is by-and-large applicable to any use-case that benefits or inherently makes 
 
 ## Papers
 There is a large body of work concerning combinatory logic synthesis, utilizing CoSy (formerly known as the CLS-framework). 
-It has been utilized for robotics, logistics, CAD assemblies, factory planning, and many more. 
+It has been applied to robotics, logistics, CAD assemblies, factory planning, and many other areas. 
 An overview over relevant literature, split into applications of CoSy and the theory behind it, is found in the following.
-### Applications
 
-### Theory
+/// tab | Applications
 <div class="grid cards" style="grid-template-columns:repeat(1,minmax(min(100%,16rem),1fr))!important" markdown>
 
--   :material-book:{ .lg .middle } __[Finite Combinatory Logic with Predicates](https://doi.org/10.4230/LIPIcs.TYPES.2023.2){:target="_blank"}__
+-   :material-robot-industrial:{ .lg .middle } __[A knowledge-driven framework for synthesizing designs from modular components](https://doi.org/10.1016/j.procir.2024.05.096){:target="_blank"}__
+
+    ---
+
+    @applications-chaumet-2024
+    
+ 
+
+-   :material-robot-industrial:{ .lg .middle } __[CLS-CAD: Synthesizing CAD Assemblies in Fusion 360](https://doi.org/10.48550/arXiv.2311.18492){:target="_blank"}__
+
+    ---
+
+    @applications-chaumet-2023
+    
+ 
+
+-   :material-robot-industrial:{ .lg .middle } __[Automatic Component-Based Synthesis of User-Configured Manufacturing Simulation Models](https://doi.org/10.1109/WSC57314.2022.10015425){:target="_blank"}__
+
+    ---
+
+    @applications-mages-2022
+    
+ 
+
+-   :material-robot-industrial:{ .lg .middle } __[Synthesis of Scheduling Heuristics by Composition and Recombination](https://doi.org/10.1007/978-3-030-85672-4_21){:target="_blank"}__
+
+    ---
+
+    @applications-maeckel-2021
+    
+ 
+
+-   :material-robot-industrial:{ .lg .middle } __[A synthesis-based tool path planning approach for machining operations](https://doi.org/10.1016/j.procir.2021.11.154){:target="_blank"}__
+
+    ---
+
+    @applications-schaefer-2021
+    
+ 
+
+-   :material-robot-industrial:{ .lg .middle } __[Automatic composition of rough solution possibilities in the target planning of factory planning projects by means of combinatory logic](https://doi.org/10.1007/978-3-030-03427-6_36){:target="_blank"}__
+
+    ---
+
+    @applications-winkels-2018
+    
+ 
+
+-   :material-robot-industrial:{ .lg .middle } __[Combinatory Process Synthesis](https://doi.org/10.1007/978-3-319-47166-2_19){:target="_blank"}__
+
+    ---
+
+    @applications-bessai-2016
+
+</div>
+///
+/// tab | Theory
+<div class="grid cards" style="grid-template-columns:repeat(1,minmax(min(100%,16rem),1fr))!important" markdown>
+
+-   :material-lambda:{ .lg .middle } __[Finite Combinatory Logic with Predicates](https://doi.org/10.4230/LIPIcs.TYPES.2023.2){:target="_blank"}__
 
     ---
 
@@ -99,7 +155,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Finite Combinatory Logic Extended by a Boolean Query Language for Composition Synthesis](https://types2023.webs.upv.es/TYPES2023.pdf){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Finite Combinatory Logic Extended by a Boolean Query Language for Composition Synthesis](https://types2023.webs.upv.es/TYPES2023.pdf){:target="_blank"}__
 
     ---
 
@@ -107,7 +163,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[A Type-Theoretic Framework for Software Component Synthesis](http://doi.org/10.17877/DE290R-20320){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[A Type-Theoretic Framework for Software Component Synthesis](http://doi.org/10.17877/DE290R-20320){:target="_blank"}__
 
     ---
 
@@ -115,7 +171,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Algorithmic Aspects of Type-Based Program Synthesis](https://doi.org/10.17877/de290r-20108){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Algorithmic Aspects of Type-Based Program Synthesis](https://doi.org/10.17877/de290r-20108){:target="_blank"}__
 
     ---
 
@@ -123,7 +179,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[CLS-SMT: Bringing Together Combinatory Logic Synthesis and Satisfiability Modulo Theories](https://doi.org/10.4204/EPTCS.301.7){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[CLS-SMT: Bringing Together Combinatory Logic Synthesis and Satisfiability Modulo Theories](https://doi.org/10.4204/EPTCS.301.7){:target="_blank"}__
 
     ---
 
@@ -131,7 +187,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[User Support for the Combinator Logic Synthesizer Framework](https://doi.org/10.4204/EPTCS.284.2){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[User Support for the Combinator Logic Synthesizer Framework](https://doi.org/10.4204/EPTCS.284.2){:target="_blank"}__
 
     ---
 
@@ -139,7 +195,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Combinatory Synthesis of Classes Using Feature Grammars](https://doi.org/10.1007/978-3-319-28934-2_7){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Combinatory Synthesis of Classes Using Feature Grammars](https://doi.org/10.1007/978-3-319-28934-2_7){:target="_blank"}__
 
     ---
 
@@ -147,7 +203,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[A Long and Winding Road Towards Modular Synthesis](https://doi.org/10.1007/978-3-319-47166-2_21){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[A Long and Winding Road Towards Modular Synthesis](https://doi.org/10.1007/978-3-319-47166-2_21){:target="_blank"}__
 
     ---
 
@@ -155,7 +211,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Mixin Composition Synthesis Based on Intersection Types](https://doi.org/10.4230/LIPIcs.TLCA.2015.76){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Mixin Composition Synthesis Based on Intersection Types](https://doi.org/10.4230/LIPIcs.TLCA.2015.76){:target="_blank"}__
 
     ---
 
@@ -163,7 +219,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Towards Migrating Object-Oriented Frameworks to Enable Synthesis of Product Line Members](https://doi.org/10.1145/2791060.2791076){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Towards Migrating Object-Oriented Frameworks to Enable Synthesis of Product Line Members](https://doi.org/10.1145/2791060.2791076){:target="_blank"}__
 
     ---
 
@@ -171,7 +227,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Combinatory Logic Synthesizer](https://doi.org/10.1007/978-3-662-45234-9_3){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Combinatory Logic Synthesizer](https://doi.org/10.1007/978-3-662-45234-9_3){:target="_blank"}__
 
     ---
 
@@ -179,7 +235,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Staged Composition Synthesis](https://doi.org/10.1007/978-3-642-54833-8_5){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Staged Composition Synthesis](https://doi.org/10.1007/978-3-642-54833-8_5){:target="_blank"}__
 
     ---
 
@@ -187,7 +243,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Towards Combinatory Logic Synthesis](#){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Towards Combinatory Logic Synthesis](#){:target="_blank"}__
 
     ---
 
@@ -195,7 +251,7 @@ An overview over relevant literature, split into applications of CoSy and the th
 
 
 
--   :material-book:{ .lg .middle } __[Bounded Combinatory Logic](https://doi.org/10.4230/LIPICS.CSL.2012.243){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Bounded Combinatory Logic](https://doi.org/10.4230/LIPICS.CSL.2012.243){:target="_blank"}__
 
     ---
 
@@ -203,7 +259,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 
--   :material-book:{ .lg .middle } __[Finite Combinatory Logic with Intersection Types](https://doi.org/10.1007/978-3-642-21691-6_15){:target="_blank"}__
+-   :material-lambda:{ .lg .middle } __[Finite Combinatory Logic with Intersection Types](https://doi.org/10.1007/978-3-642-21691-6_15){:target="_blank"}__
 
     ---
 
@@ -211,3 +267,7 @@ An overview over relevant literature, split into applications of CoSy and the th
     
  
 </div>
+///
+
+
+

@@ -18,7 +18,7 @@ theme:
   favicon: assets/images/logo.svg
   icon:
     repo: fontawesome/brands/github
-    logo: material/wall
+    logo: material/lambda
   font:
     text: Roboto
     code: Roboto Mono
@@ -98,10 +98,12 @@ plugins:
 
 markdown_extensions:
   - attr_list:
+  - admonition:
   - tables:
   - md_in_html:
   - toc:
         permalink: true
+  - pymdownx.details:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -116,6 +118,8 @@ markdown_extensions:
       style_plain_text: cosy-py
   - pymdownx.snippets:
   - pymdownx.superfences:
+  - pymdownx.blocks.tab:
+      alternate_style: true
 
 extra:
   social:
